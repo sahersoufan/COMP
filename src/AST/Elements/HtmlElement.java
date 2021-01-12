@@ -11,8 +11,8 @@ public class HtmlElement {
 
     private String tagName;
     private List<HtmlAttribute> htmlAttributeList = new ArrayList<>();
-    private HtmlContent htmlContentList = new HtmlContent();
-    private List<MustacheExpression> mustacheExpressionList = new ArrayList<>();
+    private HtmlContent htmlContent = new HtmlContent();
+    private MustacheExpression mustacheExpressionList = new MustacheExpression();
 
 
     public String getTagName() {
@@ -31,19 +31,20 @@ public class HtmlElement {
         this.htmlAttributeList = htmlAttributeList;
     }
 
-    public HtmlContent getHtmlContentList() {
-        return htmlContentList;
+
+    public HtmlContent getHtmlContent() {
+        return htmlContent;
     }
 
-    public void setHtmlContentList(HtmlContent htmlContentList) {
-        this.htmlContentList = htmlContentList;
+    public void setHtmlContent(HtmlContent htmlContent) {
+        this.htmlContent = htmlContent;
     }
 
-    public List<MustacheExpression> getMustacheExpressionList() {
+    public MustacheExpression getMustacheExpressionList() {
         return mustacheExpressionList;
     }
 
-    public void setMustacheExpressionList(List<MustacheExpression> mustacheExpressionList) {
+    public void setMustacheExpressionList(MustacheExpression mustacheExpressionList) {
         this.mustacheExpressionList = mustacheExpressionList;
     }
 }
