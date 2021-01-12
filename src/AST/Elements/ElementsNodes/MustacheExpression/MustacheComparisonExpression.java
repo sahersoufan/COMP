@@ -5,7 +5,7 @@ import AST.Elements.ElementsNodes.Miscallenous.LiteralValue;
 public class MustacheComparisonExpression {
     private String variable;
     private String op;
-    private LiteralValue literalValue = new LiteralValue();
+    private String Mustachevalue;
 
     public String getVariable() {
         return variable;
@@ -23,11 +23,11 @@ public class MustacheComparisonExpression {
         this.op = op;
     }
 
-    public LiteralValue getLiteralValue() {
-        return literalValue;
+    public String getMustachevalue() {
+        return Mustachevalue;
     }
 
-    public void setLiteralValue(LiteralValue literalValue) {
-        this.literalValue = literalValue;
+    public void setMustachevalue(String mustachevalue) {
+        Mustachevalue = mustachevalue;
     }
 }

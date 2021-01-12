@@ -6,13 +6,14 @@ import AST.Elements.ElementsNodes.Miscallenous.LiteralValue;
 import AST.Elements.ElementsNodes.Miscallenous.Property;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShowHideExpression {
 
     private LiteralValue value = new LiteralValue();
     private String objName;
-    private ArrayList<ArrayBody> arr = new ArrayList<ArrayBody>();
-    private ArrayList<Property> properties = new ArrayList<Property>();
+    private List<ArrayBody> arr = new ArrayList<ArrayBody>();
+    private Property property = new Property();
     private FunctionCall funcCall = new FunctionCall();
     private String variable;
 
@@ -32,20 +33,20 @@ public class ShowHideExpression {
         this.objName = objName;
     }
 
-    public ArrayList<ArrayBody> getArr() {
+    public List<ArrayBody> getArr() {
         return arr;
     }
 
-    public void setArr(ArrayList<ArrayBody> arr) {
+    public void setArr(List<ArrayBody> arr) {
         this.arr = arr;
     }
 
-    public ArrayList<Property> getProperties() {
-        return properties;
+    public Property getProperty() {
+        return property;
     }
 
-    public void setProperties(ArrayList<Property> properties) {
-        this.properties = properties;
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
     public FunctionCall getFuncCall() {

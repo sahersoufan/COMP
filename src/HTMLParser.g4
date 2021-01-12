@@ -108,7 +108,7 @@ ifExpression
 
 modelExpression
     : variable
-    | array
+    | array (array)*
     ;
 
 annotationExpression

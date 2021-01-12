@@ -2,11 +2,13 @@ package AST.Elements.ElementsNodes.Expression;
 
 import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
 
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class ModelExpression {
     private String variable;
-    private ArrayList<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
+    private List<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
 
     public String getVariable() {
         return variable;
@@ -16,11 +18,11 @@ public class ModelExpression {
         this.variable = variable;
     }
 
-    public ArrayList<ArrayBody> getArrayBodies() {
+    public List<ArrayBody> getArrayBodies() {
         return arrayBodies;
     }
 
-    public void setArrayBodies(ArrayList<ArrayBody> arrayBodies) {
+    public void setArrayBodies(List<ArrayBody> arrayBodies) {
         this.arrayBodies = arrayBodies;
     }
 }

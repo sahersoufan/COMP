@@ -1,22 +1,22 @@
 package AST.Elements.ElementsNodes.Expression;
 
 public class SwitchCaseExpression {
-    private String stringCase;
-    private Double numberCase;
+    private String caseString;
+    private String caseNumber;
 
-    public String getStringCase() {
-        return stringCase;
+    public String getCaseString() {
+        return caseString;
     }
 
-    public void setStringCase(String stringCase) {
-        this.stringCase = stringCase;
+    public void setCaseString(String caseString) {
+        this.caseString = caseString;
     }
 
-    public Double getNumberCase() {
-        return numberCase;
+    public String getCaseNumber() {
+        return caseNumber;
     }
 
-    public void setNumberCase(Double numberCase) {
-        this.numberCase = numberCase;
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
     }
 }

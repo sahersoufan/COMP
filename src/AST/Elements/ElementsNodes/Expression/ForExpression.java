@@ -4,17 +4,35 @@ import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
 import AST.Elements.ElementsNodes.Miscallenous.ObjectBody;
 
 public class ForExpression {
-    private String[] variable;
+    private String leftVariable;
+    private String rightVariable;
+    private String iterator;
     private ArrayBody arr = new ArrayBody();
     private String objName;
     private ObjectBody objBody = new ObjectBody();
 
-    public String[] getVariable() {
-        return variable;
+    public String getLeftVariable() {
+        return leftVariable;
     }
 
-    public void setVariable(String[] variable) {
-        this.variable = variable;
+    public void setLeftVariable(String leftVariable) {
+        this.leftVariable = leftVariable;
+    }
+
+    public String getRightVariable() {
+        return rightVariable;
+    }
+
+    public void setRightVariable(String rightVariable) {
+        this.rightVariable = rightVariable;
+    }
+
+    public String getIterator() {
+        return iterator;
+    }
+
+    public void setIterator(String iterator) {
+        this.iterator = iterator;
     }
 
     public ArrayBody getArr() {

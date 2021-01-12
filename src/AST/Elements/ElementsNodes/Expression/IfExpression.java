@@ -6,6 +6,7 @@ import AST.Elements.ElementsNodes.Miscallenous.FunctionParameters;
 import AST.Elements.ElementsNodes.Miscallenous.Property;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IfExpression {
 
@@ -14,9 +15,9 @@ public class IfExpression {
     private String variable;
     private FunctionCall functionCall = new FunctionCall();
     private String objName;
-    private ArrayList<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
-    private ArrayList<FunctionParameters> parameters = new ArrayList<FunctionParameters>();
-    private ArrayList<Property> properties = new ArrayList<Property>();
+    private List<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
+    private FunctionParameters parameters = new FunctionParameters();
+    private Property property = new Property();
 
     public ComparisonExpression getComparsionExpression() {
         return comparisonExpression;
@@ -58,27 +59,35 @@ public class IfExpression {
         this.objName = objName;
     }
 
-    public ArrayList<ArrayBody> getArrayBodies() {
+    public ComparisonExpression getComparisonExpression() {
+        return comparisonExpression;
+    }
+
+    public void setComparisonExpression(ComparisonExpression comparisonExpression) {
+        this.comparisonExpression = comparisonExpression;
+    }
+
+    public List<ArrayBody> getArrayBodies() {
         return arrayBodies;
     }
 
-    public void setArrayBodies(ArrayList<ArrayBody> arrayBodies) {
+    public void setArrayBodies(List<ArrayBody> arrayBodies) {
         this.arrayBodies = arrayBodies;
     }
 
-    public ArrayList<FunctionParameters> getParameters() {
+    public FunctionParameters getParameters() {
         return parameters;
     }
 
-    public void setParameters(ArrayList<FunctionParameters> parameters) {
+    public void setParameters(FunctionParameters parameters) {
         this.parameters = parameters;
     }
 
-    public ArrayList<Property> getProperties() {
-        return properties;
+    public Property getProperty() {
+        return property;
     }
 
-    public void setProperties(ArrayList<Property> properties) {
-        this.properties = properties;
+    public void setProperty(Property property) {
+        this.property = property;
     }
 }

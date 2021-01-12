@@ -2,25 +2,33 @@ package AST.Elements.ElementsNodes.Miscallenous;
 
 public class LiteralValue {
     private String string;
-    private Double number;
-    private Boolean aBoolean;
+    private String number;
+    private String Boolean;
     private ObjectBody objBody = new ObjectBody();
     private ArrayBody arrayBody = new ArrayBody();
 
-    public Double getNumber() {
+    public String getString() {
+        return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Double number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
-    public Boolean getaBoolean() {
-        return aBoolean;
+    public String getBoolean() {
+        return Boolean;
     }
 
-    public void setaBoolean(Boolean aBoolean) {
-        this.aBoolean = aBoolean;
+    public void setBoolean(String aBoolean) {
+        Boolean = aBoolean;
     }
 
     public ObjectBody getObjBody() {
@@ -37,13 +45,5 @@ public class LiteralValue {
 
     public void setArrayBody(ArrayBody arrayBody) {
         this.arrayBody = arrayBody;
-    }
-
-    public String getString() {
-        return string;
-    }
-
-    public void setString(String string) {
-        this.string = string;
     }
 }

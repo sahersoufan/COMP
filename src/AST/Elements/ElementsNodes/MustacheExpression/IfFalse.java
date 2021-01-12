@@ -3,13 +3,13 @@ package AST.Elements.ElementsNodes.MustacheExpression;
 import AST.Elements.ElementsNodes.Miscallenous.LiteralValue;
 
 public class IfFalse {
-    private LiteralValue literalValue = new LiteralValue();
+    private String ifFalse ;
 
-    public LiteralValue getLiteralValue() {
-        return literalValue;
+    public String getIfFalse() {
+        return ifFalse;
     }
 
-    public void setLiteralValue(LiteralValue literalValue) {
-        this.literalValue = literalValue;
+    public void setIfFalse(String ifFalse) {
+        this.ifFalse = ifFalse;
     }
 }
