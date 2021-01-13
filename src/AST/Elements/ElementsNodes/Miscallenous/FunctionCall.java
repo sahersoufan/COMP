@@ -1,18 +1,21 @@
 package AST.Elements.ElementsNodes.Miscallenous;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FunctionCall {
     private String functionName;
-    private ArrayList<FunctionParameters> functionParameters = new ArrayList<>();
+    private FunctionParametersList functionParameters = new FunctionParametersList();
 
-    public ArrayList<FunctionParameters> getFunctionParameters() {
+
+    public FunctionParametersList getFunctionParameters() {
         return functionParameters;
     }
 
-    public void setFunctionParameters(ArrayList<FunctionParameters> functionParameters) {
+    public void setFunctionParameters(FunctionParametersList functionParameters) {
         this.functionParameters = functionParameters;
     }
+
 
     public String getFunctionName() {
         return functionName;

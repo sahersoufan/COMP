@@ -1,12 +1,13 @@
 package AST.Elements.ElementsNodes.Miscallenous;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Property {
     private String variable;
     private String functionName;
-    private ArrayList<ArrayBody> arrayBodies = new ArrayList<>();
-    private ArrayList<FunctionParameters> functionParameters = new ArrayList<>();
+    private List<ArrayBody> arrayBodies = new ArrayList<>();
+    private FunctionParametersList functionParametersList = new FunctionParametersList();
 
     public String getVariable() {
         return variable;
@@ -24,19 +25,19 @@ public class Property {
         this.functionName = functionName;
     }
 
-    public ArrayList<ArrayBody> getArrayBodies() {
+    public List<ArrayBody> getArrayBodies() {
         return arrayBodies;
     }
 
-    public void setArrayBodies(ArrayList<ArrayBody> arrayBodies) {
+    public void setArrayBodies(List<ArrayBody> arrayBodies) {
         this.arrayBodies = arrayBodies;
     }
 
-    public ArrayList<FunctionParameters> getFunctionParameters() {
-        return functionParameters;
+    public FunctionParametersList getFunctionParametersList() {
+        return functionParametersList;
     }
 
-    public void setFunctionParameters(ArrayList<FunctionParameters> functionParameters) {
-        this.functionParameters = functionParameters;
+    public void setFunctionParametersList(FunctionParametersList functionParametersList) {
+        this.functionParametersList = functionParametersList;
     }
 }

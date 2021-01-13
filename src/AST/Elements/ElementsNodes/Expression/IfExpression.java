@@ -1,9 +1,6 @@
 package AST.Elements.ElementsNodes.Expression;
 
-import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
-import AST.Elements.ElementsNodes.Miscallenous.FunctionCall;
-import AST.Elements.ElementsNodes.Miscallenous.FunctionParameters;
-import AST.Elements.ElementsNodes.Miscallenous.Property;
+import AST.Elements.ElementsNodes.Miscallenous.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +13,7 @@ public class IfExpression {
     private FunctionCall functionCall = new FunctionCall();
     private String objName;
     private List<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
-    private FunctionParameters parameters = new FunctionParameters();
+    private FunctionParametersList parametersList = new FunctionParametersList();
     private Property property = new Property();
 
     public ComparisonExpression getComparsionExpression() {
@@ -75,12 +72,12 @@ public class IfExpression {
         this.arrayBodies = arrayBodies;
     }
 
-    public FunctionParameters getParameters() {
-        return parameters;
+    public FunctionParametersList getParametersList() {
+        return parametersList;
     }
 
-    public void setParameters(FunctionParameters parameters) {
-        this.parameters = parameters;
+    public void setParametersList(FunctionParametersList parametersList) {
+        this.parametersList = parametersList;
     }
 
     public Property getProperty() {

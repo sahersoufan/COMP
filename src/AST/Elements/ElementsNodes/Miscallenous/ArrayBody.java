@@ -1,15 +1,16 @@
 package AST.Elements.ElementsNodes.Miscallenous;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ArrayBody {
-    private ArrayList<LiteralValue> literalValues = new ArrayList<>();
+    private List<LiteralValue> literalValues = new ArrayList<>();
 
-    public ArrayList<LiteralValue> getLiteralValues() {
+    public List<LiteralValue> getLiteralValues() {
         return literalValues;
     }
 
-    public void setLiteralValues(ArrayList<LiteralValue> literalValues) {
+    public void setLiteralValues(List<LiteralValue> literalValues) {
         this.literalValues = literalValues;
     }
 }

@@ -12,7 +12,7 @@ public class HtmlElement {
     private String tagName;
     private List<HtmlAttribute> htmlAttributeList = new ArrayList<>();
     private HtmlContent htmlContent = new HtmlContent();
-    private MustacheExpression mustacheExpressionList = new MustacheExpression();
+    private MustacheExpression mustacheExpression = new MustacheExpression();
 
 
     public String getTagName() {
@@ -40,11 +40,11 @@ public class HtmlElement {
         this.htmlContent = htmlContent;
     }
 
-    public MustacheExpression getMustacheExpressionList() {
-        return mustacheExpressionList;
+    public MustacheExpression getMustacheExpression() {
+        return mustacheExpression;
     }
 
-    public void setMustacheExpressionList(MustacheExpression mustacheExpressionList) {
-        this.mustacheExpressionList = mustacheExpressionList;
+    public void setMustacheExpression(MustacheExpression mustacheExpression) {
+        this.mustacheExpression = mustacheExpression;
     }
 }

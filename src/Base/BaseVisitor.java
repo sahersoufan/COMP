@@ -15,6 +15,8 @@ import org.stringtemplate.v4.misc.AmbiguousMatchException;
 import org.w3c.dom.html.HTMLAreaElement;
 
 import javax.swing.*;
+import javax.swing.text.ElementIterator;
+import java.security.spec.RSAOtherPrimeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,9 +112,10 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         HtmlElement element = new HtmlElement();
         List<HtmlAttribute> attributeList = new ArrayList<>();
         HtmlContent htmlContent = new HtmlContent();
-        //TODO mustachce expression if hasan's job
+        MustacheExpression mustacheExpression = new MustacheExpression();
 
         if(ctx.TAG_NAME() != null){
+            //TODO fix this
             element.setTagName(ctx.TAG_NAME().toString());
         }
 
@@ -128,6 +131,10 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             element.setHtmlContent(htmlContent);
         }
 
+        if (!ctx.mustacheExpression().isEmpty()) {
+            mustacheExpression = visitMustacheExpression(ctx.mustacheExpression());
+            element.setMustacheExpression(mustacheExpression);
+        }
 
         return element;
     }
@@ -271,7 +278,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         return htmlAttribute;
     }
 
-    //TODO this is not working
+
     @Override
     public HtmlContent visitHtmlContent(HTMLParser.HtmlContentContext ctx) {
         System.out.println("visit HtmlContent");
@@ -412,7 +419,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             System.out.println("Variable : " + variable + "/n");
             showHideExpression.setVariable(variable);
         }
-
+         return showHideExpression;
     }
 
     @Override
@@ -482,7 +489,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         FunctionCall functionCall = new FunctionCall();
         String objName;
         List<ArrayBody> arrayBodyList = new ArrayList<>();
-        FunctionParameters parameters = new FunctionParameters();
+        FunctionParametersList parametersList = new FunctionParametersList();
         Property property = new Property();
         IfExpression ifExpression = new IfExpression();
 
@@ -520,8 +527,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             }
 
             if (!ctx.parameters().isEmpty()) {
-                parameters = visitParameters(ctx.parameters());
-                ifExpression.setParameters(parameters);
+                parametersList = visitParameters(ctx.parameters());
+                ifExpression.setParametersList(parametersList);
             }
 
             if (ctx.property().isEmpty()) {
@@ -572,7 +579,276 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         return annotationExpression;
     }
 
+    @Override
+    public ArrayBody visitArray(HTMLParser.ArrayContext ctx) {
+        System.out.println("visit Array");
+        List<LiteralValue> literalValues = new ArrayList<>();
+        ArrayBody arrayBody = new ArrayBody();
 
+        if (!ctx.value().isEmpty()) {
+            for (int i = 0; i < ctx.value().size(); i++) {
+                literalValues.add(visitValue(ctx.value(i)));
+                arrayBody.setLiteralValues(literalValues);
+            }
+        }else System.out.println("[ ]");
+        return arrayBody;
+    }
+
+    @Override
+    public LiteralValue visitValue(HTMLParser.ValueContext ctx) {
+        System.out.println("visit Value");
+        String string;
+        String number;
+        String aboolean;
+        ArrayBody arrayBody = new ArrayBody();
+        ObjectBody objectBody = new ObjectBody();
+        LiteralValue literalValue = new LiteralValue();
+
+        if (ctx.CP_CONTENT_STRING() != null) {
+            string = ctx.CP_CONTENT_STRING().getSymbol().getText();
+            System.out.println(string + "/t");
+            literalValue.setString(string);
+        }
+
+        if (ctx.CP_CONTENT_NUMBER() != null) {
+            number = ctx.CP_CONTENT_NUMBER().getSymbol().getText();
+            System.out.println(number + "/t");
+            literalValue.setNumber(number);
+        }
+
+        if (ctx.CP_CONTENT_NULL() != null) {
+            aboolean = ctx.CP_CONTENT_NULL().getSymbol().getText();
+            literalValue.setBoolean(aboolean);
+        }
+
+        if (ctx.CP_CONTENT_TRUE() != null) {
+            aboolean = ctx.CP_CONTENT_TRUE().getSymbol().getText();
+            literalValue.setBoolean(aboolean);
+        }
+
+        if (ctx.CP_CONTENT_FALSE() != null) {
+            aboolean = ctx.CP_CONTENT_FALSE().getSymbol().getText();
+            literalValue.setBoolean(aboolean);
+        }
+
+        if (!ctx.array().isEmpty()) {
+            arrayBody = visitArray(ctx.array());
+            literalValue.setArrayBody(arrayBody);
+        }
+
+        if (!ctx.objBody().isEmpty()) {
+            objectBody = visitObjBody(ctx.objBody());
+            literalValue.setObjBody(objectBody);
+        }
+        return literalValue;
+    }
+
+    @Override
+    public Property visitProperty(HTMLParser.PropertyContext ctx) {
+        System.out.println("visit property");
+        String variable;
+        String functionName;
+        List<ArrayBody> arrayBodyList = new ArrayList<>();
+        FunctionParametersList functionParametersList = new FunctionParametersList();
+        Property property = new Property();
+
+        if (ctx.CP_CONTENT_IDENTIFIER() != null) {
+            variable = ctx.CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("ID : " + variable);
+            property.setVariable(variable);
+        }
+
+        if (!ctx.functionName().isEmpty()) {
+            functionName = ctx.functionName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("function : " + functionName);
+            property.setFunctionName(functionName);
+
+            if(!ctx.array().isEmpty()){
+                for (int i = 0; i < ctx.array().size(); i++) {
+                    arrayBodyList.add(visitArray(ctx.array(i)));
+                    property.setArrayBodies(arrayBodyList);
+                }
+            }
+
+            if (!ctx.parameters().isEmpty()) {
+                functionParametersList = visitParameters(ctx.parameters());
+                property.setFunctionParametersList(functionParametersList);
+            }
+        }
+        return property;
+    }
+
+    @Override
+    public FunctionCall visitFunctionCall(HTMLParser.FunctionCallContext ctx) {
+        System.out.println("visit FunctionCall");
+        String functionName;
+        FunctionParametersList functionParametersList = new FunctionParametersList();
+        FunctionCall functionCall = new FunctionCall();
+
+        if (!ctx.functionName().isEmpty()) {
+            functionName = ctx.functionName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("functionName : " + functionName);
+            functionCall.setFunctionName(functionName);
+        }
+
+        if (!ctx.parameters().isEmpty()) {
+            functionParametersList = visitParameters(ctx.parameters());
+            functionCall.setFunctionParameters(functionParametersList);
+        }
+        return functionCall;
+    }
+
+    @Override
+    public FunctionParametersList visitParameters(HTMLParser.ParametersContext ctx) {
+        System.out.println("visit parameters");
+        List<FunctionParameters> functionParameters = new ArrayList<>();
+        FunctionParametersList functionParametersList = new FunctionParametersList();
+
+        if (!ctx.parameter().isEmpty()) {
+            for (int i = 0; i < ctx.parameter().size(); i++) {
+                functionParameters.add(visitParameter(ctx.parameter(i)));
+                functionParametersList.setFunctionParameters(functionParameters);
+            }
+        }
+        return functionParametersList;
+    }
+
+    @Override
+    public FunctionParameters visitParameter(HTMLParser.ParameterContext ctx) {
+        System.out.println("visit Parameter");
+        String parameterName;
+        FunctionParameters functionParameters = new FunctionParameters();
+
+        if (!ctx.parameterName().isEmpty()) {
+            if(ctx.parameterName().CP_CONTENT_IDENTIFIER() != null){
+                parameterName = ctx.parameterName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+                System.out.println(parameterName + "/t");
+                functionParameters.setParameterName(parameterName);
+            }
+
+            if(ctx.parameterName().CP_CONTENT_STRING() != null){
+                parameterName = ctx.parameterName().CP_CONTENT_STRING().getSymbol().getText();
+                System.out.println(parameterName + "/t");
+                functionParameters.setParameterName(parameterName);
+            }
+
+            if (ctx.parameterName().CP_CONTENT_NUMBER() != null) {
+                parameterName = ctx.parameterName().CP_CONTENT_NUMBER().getSymbol().getText();
+                System.out.println(parameterName + "/t");
+                functionParameters.setParameterName(parameterName);
+            }
+        }
+        return functionParameters;
+    }
+
+    @Override
+    public ComparisonExpression visitComparisonExpression(HTMLParser.ComparisonExpressionContext ctx) {
+        System.out.println("visit ComparisonExpression");
+        String leftVariable;
+        ComparisonOpeartor operator = new ComparisonOpeartor();
+        LiteralValue value = new LiteralValue();
+        String rightVariable;
+
+        String objName;
+        Property property = new Property();
+
+        ComparisonExpression comparisonExpression = new ComparisonExpression();
+
+        if(!ctx.variable(0).isEmpty()){
+            leftVariable = ctx.variable(0).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("variable : " + leftVariable + "/t");
+            comparisonExpression.setLeftVar(leftVariable);
+        }
+
+        if (!ctx.comparisonOperator().isEmpty()) {
+            operator = visitComparisonOperator(ctx.comparisonOperator());
+            comparisonExpression.setComparisonOperator(operator);
+        }
+
+        if(!ctx.variable(1).isEmpty()){
+            rightVariable = ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("variable : " + rightVariable + "/n");
+            comparisonExpression.setRightVar(rightVariable);
+        }
+
+        if (!ctx.value().isEmpty()) {
+            value = visitValue(ctx.value());
+            comparisonExpression.setLiteralValue(value);
+        }
+
+        if (!ctx.objName().isEmpty()) {
+            objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("object name : " + objName);
+            comparisonExpression.setObjName(objName);
+
+            if (!ctx.property().isEmpty()) {
+                property = visitProperty(ctx.property());
+                comparisonExpression.setProperty(property);
+            }
+
+            if (!ctx.comparisonOperator().isEmpty()) {
+                operator = visitComparisonOperator(ctx.comparisonOperator());
+                comparisonExpression.setComparisonOperator(operator);
+            }
+
+            if (!ctx.variable(0).isEmpty()) {
+                rightVariable = ctx.variable(0).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+                System.out.println("variabel : " + rightVariable);
+                comparisonExpression.setRightVar(rightVariable);
+            }
+            if (!ctx.value().isEmpty()) {
+                value = visitValue(ctx.value());
+                comparisonExpression.setLiteralValue(value);
+            }
+        }
+
+    return comparisonExpression;
+    }
+
+    @Override
+    public ComparisonOpeartor visitComparisonOperator(HTMLParser.ComparisonOperatorContext ctx) {
+        System.out.println("visit ComparisonOperator");
+        String operator;
+        ComparisonOpeartor comparisonOpeartor = new ComparisonOpeartor();
+
+
+        if(ctx.CP_CONTENT_EQUAL_TO() != null){
+            operator = ctx.CP_CONTENT_EQUAL_TO().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+        if (ctx.CP_CONTENT_GREATER_EQ() != null) {
+            operator = ctx.CP_CONTENT_GREATER_EQ().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+        if (ctx.CP_CONTENT_GREATER_THAN() != null) {
+            operator = ctx.CP_CONTENT_GREATER_THAN().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+        if (ctx.CP_CONTENT_LESS_EQ() != null) {
+            operator = ctx.CP_CONTENT_LESS_EQ().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+        if (ctx.CP_CONTENT_LESS_THAN() != null) {
+            operator = ctx.CP_CONTENT_LESS_THAN().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+        if (ctx.CP_CONTENT_NOT_EQUAL() != null) {
+            operator = ctx.CP_CONTENT_NOT_EQUAL().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            comparisonOpeartor.setComparisonOperator(operator);
+        }
+    return comparisonOpeartor;
+    }
+
+    @Override
+    public BooleanExpression visitBooleanExpression(HTMLParser.BooleanExpressionContext ctx) {
+
+    }
 
     // SAHER WORK //
 

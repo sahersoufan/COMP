@@ -150,6 +150,7 @@ key
     : CP_CONTENT_IDENTIFIER
     ;
 
+//TODO must redo this rule
 value
     : CP_CONTENT_STRING
     | CP_CONTENT_NUMBER

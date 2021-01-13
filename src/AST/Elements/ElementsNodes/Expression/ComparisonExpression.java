@@ -1,6 +1,6 @@
 package AST.Elements.ElementsNodes.Expression;
 
-import AST.Elements.ElementsNodes.Miscallenous.ComparisonOperator;
+import AST.Elements.ElementsNodes.Miscallenous.ComparisonOpeartor;
 import AST.Elements.ElementsNodes.Miscallenous.LiteralValue;
 import AST.Elements.ElementsNodes.Miscallenous.Property;
 
@@ -8,7 +8,7 @@ public class ComparisonExpression {
 
     private String leftVar;
     private String rightVar;
-    private ComparisonOperator comparisonOperator = new ComparisonOperator();
+    private ComparisonOpeartor comparisonOperator = new ComparisonOpeartor();
     private LiteralValue literalValue = new LiteralValue();
     private String objName;
     private Property property = new Property();
@@ -46,11 +46,11 @@ public class ComparisonExpression {
         this.objName = objName;
     }
 
-    public ComparisonOperator getComparsionOperator() {
+    public ComparisonOpeartor getComparisonOperator() {
         return comparisonOperator;
     }
 
-    public void setComparsionOperator(ComparisonOperator comparisonOperator) {
+    public void setComparisonOperator(ComparisonOpeartor comparisonOperator) {
         this.comparisonOperator = comparisonOperator;
     }
 
