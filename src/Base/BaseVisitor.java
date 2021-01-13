@@ -583,7 +583,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         MustacheExpression Mus = new MustacheExpression();
 
         if(ctx.mustacheVariable() != null){
-            Mus.setMustahceVariable(ctx.mustacheVariable().MUSTACHE_IDENTIFIER().getSymbol().getText());
+            Mus.setMustahceVariable((String) ctx.mustacheVariable().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
 
         if(ctx.oneLineCondition() != null){
@@ -630,33 +630,74 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         //TODO لازم نعالج الحالات هون
         if(ctx.mustacheComparisonOperator() != null){
-          //  if(ctx.mustacheComparisonOperator().)
+            if(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText() != null){
+                MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText());
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText() != null){
+                MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText());
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText() != null){
+            MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText());
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText() != null){
+                MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText());
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText() != null){
+                MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText());
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText() != null){
+                MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText());
+            }
         }
         if(ctx.mustacheValue() != null){
-            MCE.setMustachevalue((String) visitMustacheValue(ctx.mustacheValue()));
+            if(ctx.mustacheValue().MUSTACHE_FALSE().getSymbol().getText() != null){
+                MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_FALSE().getSymbol().getText());
+            }else if(ctx.mustacheValue().MUSTACHE_TRUE().getSymbol().getText() != null) {
+                MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_TRUE().getSymbol().getText());
+            }else if(ctx.mustacheValue().MUSTACHE_NULL().getSymbol().getText() != null) {
+                MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_NULL().getSymbol().getText());
+            }else if(ctx.mustacheValue().MUSTACHE_NUMBER().getSymbol().getText() != null) {
+                MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_NUMBER().getSymbol().getText());
+            }else if(ctx.mustacheValue().MUSTACHE_STRING().getSymbol().getText() != null){
+                MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_STRING().getSymbol().getText());
+            }
         }
 
-        return super.visitMustacheComparisonExpression(ctx);
+        return MCE;
     }
 
-    @Override
-    public Object visitMustacheValue(HTMLParser.MustacheValueContext ctx) {
-        System.out.println("visit MustacheValue");
-        //TODO this is Wrong
-        return super.visitMustacheValue(ctx);
-    }
-
-    // TODO CHECK
     @Override
     public Object visitIfTrue(HTMLParser.IfTrueContext ctx) {
-       // TODO redo this
+        System.out.println("visit IfTrue");
+        IfTrue IT = new IfTrue();
+        if (ctx.MUSTACHE_NULL().getSymbol().getText() != null){
+            IT.setIfTrue(ctx.MUSTACHE_NULL().getSymbol().getText());
+        }else if(ctx.MUSTACHE_TRUE().getSymbol().getText() != null){
+            IT.setIfTrue(ctx.MUSTACHE_TRUE().getSymbol().getText());
+        }else if(ctx.MUSTACHE_FALSE().getSymbol().getText() != null){
+            IT.setIfTrue(ctx.MUSTACHE_FALSE().getSymbol().getText());
+        }else if(ctx.MUSTACHE_STRING().getSymbol().getText() != null){
+            IT.setIfTrue(ctx.MUSTACHE_STRING().getSymbol().getText());
+        }else if(ctx.MUSTACHE_NUMBER().getSymbol().getText() != null){
+            IT.setIfTrue(ctx.MUSTACHE_NUMBER().getSymbol().getText());
+        }
+
+        return IT;
     }
 
     @Override
     public Object visitIfFalse(HTMLParser.IfFalseContext ctx) {
-        //TODO redo this
-    }
+        System.out.println("visit IfFalse");
+        IfFalse IF = new IfFalse();
+        if (ctx.MUSTACHE_NULL().getSymbol().getText() != null){
+            IF.setIfFalse(ctx.MUSTACHE_NULL().getSymbol().getText());
+        }else if(ctx.MUSTACHE_TRUE().getSymbol().getText() != null){
+            IF.setIfFalse(ctx.MUSTACHE_TRUE().getSymbol().getText());
+        }else if(ctx.MUSTACHE_FALSE().getSymbol().getText() != null){
+            IF.setIfFalse(ctx.MUSTACHE_FALSE().getSymbol().getText());
+        }else if(ctx.MUSTACHE_STRING().getSymbol().getText() != null){
+            IF.setIfFalse(ctx.MUSTACHE_STRING().getSymbol().getText());
+        }else if(ctx.MUSTACHE_NUMBER().getSymbol().getText() != null){
+            IF.setIfFalse(ctx.MUSTACHE_NUMBER().getSymbol().getText());
+        }
 
+        return IF;
+    }
 
     // FILTER
     @Override
@@ -666,16 +707,16 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         MustacheFilter MF = new MustacheFilter();
 
         if(ctx.modelName() != null){
-            MF.setModelName((String) ctx.modelName().getText());
+            MF.setModelName((String) ctx.modelName().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
         if(ctx.formatName() != null){
-            MF.setFormatName((String) ctx.formatName().getText());
+            MF.setFormatName((String) ctx.formatName().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
         if(ctx.formatType() != null){
-            MF.setFormatType((String) ctx.formatType().getText());
+            MF.setFormatType((String) ctx.formatType().MUSTACHE_STRING().getSymbol().getText());
         }
+        return MF;
 
-        return super.visitFilter(ctx);
     }
 
 // SAHER WORK //
