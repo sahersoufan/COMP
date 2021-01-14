@@ -3,6 +3,7 @@ parser grammar HTMLParser;
 
 options { tokenVocab=HTMLLexer; }
 
+// TODO we need to check all (array) cause may it have proparity
 htmlDocument
     : scriptletOrSeaWs* XML? scriptletOrSeaWs* DTD? scriptletOrSeaWs* htmlElements*
     ;
@@ -108,7 +109,7 @@ ifExpression
 
 modelExpression
     : variable
-    | array (array)*
+    | array (array)* // TODO may it's have proparity
     ;
 
 annotationExpression
@@ -139,6 +140,7 @@ objBody
 
 property
     : CP_CONTENT_IDENTIFIER
+    // TODO check this rule (array)* ??!
     | functionName array* CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR
     ;
 
@@ -161,6 +163,7 @@ value
     | CP_CONTENT_NULL
     ;
 
+//TODO what is this ???!!
 functionCall
     : functionName CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR
     ;
