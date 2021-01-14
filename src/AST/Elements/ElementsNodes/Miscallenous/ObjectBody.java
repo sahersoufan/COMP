@@ -1,16 +1,17 @@
 package AST.Elements.ElementsNodes.Miscallenous;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectBody {
 
-    private ArrayList<ObjectPair> objPairs = new ArrayList<ObjectPair>();
+    private List<ObjectPair> objPairs = new ArrayList<ObjectPair>();
 
-    public ArrayList<ObjectPair> getObjPairs() {
+    public List<ObjectPair> getObjPairs() {
         return objPairs;
     }
 
-    public void setObjPairs(ArrayList<ObjectPair> objPairs) {
+    public void setObjPairs(List<ObjectPair> objPairs) {
         this.objPairs = objPairs;
     }
 }

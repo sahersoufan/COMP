@@ -9,17 +9,24 @@ import java.util.List;
 public class HtmlContent {
 
 
-    private HtmlCharData charData = new HtmlCharData();
     private List<HtmlCharData> htmlCharDataList = new ArrayList<>();
     private List<HtmlElement> htmlElement = new ArrayList<>();
+    private List<String> htmlComment = new ArrayList<>();
 
-
-    public HtmlCharData getCharData() {
-        return charData;
+    public List<HtmlElement> getHtmlElement() {
+        return htmlElement;
     }
 
-    public void setCharData(HtmlCharData charData) {
-        this.charData = charData;
+    public void setHtmlElement(List<HtmlElement> htmlElement) {
+        this.htmlElement = htmlElement;
+    }
+
+    public List<String> getHtmlComment() {
+        return htmlComment;
+    }
+
+    public void setHtmlComment(List<String> htmlComment) {
+        this.htmlComment = htmlComment;
     }
 
     public List<HtmlCharData> getHtmlCharDataList() {
@@ -28,13 +35,5 @@ public class HtmlContent {
 
     public void setHtmlCharDataList(List<HtmlCharData> htmlCharDataList) {
         this.htmlCharDataList = htmlCharDataList;
-    }
-
-    public List<HtmlElement> getHtmlElement() {
-        return htmlElement;
-    }
-
-    public void setHtmlElement(List<HtmlElement> htmlElement) {
-        this.htmlElement = htmlElement;
     }
 }

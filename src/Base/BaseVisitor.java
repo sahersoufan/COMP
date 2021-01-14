@@ -59,6 +59,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         System.out.println("visit ScriptLetOrSeaWs");
         // TODO CHECK WHY WE DO IT WITH LIST
+        // grammar says (scriptLetOrSeaWs)* that's why we used list
         List<String> scriptLetOrSeaWs = new ArrayList<>();
 
         for(int i = 0; i < ctx.SCRIPTLET().getChildCount(); i++){
@@ -72,46 +73,61 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     public HtmlElements visitHtmlElements(HTMLParser.HtmlElementsContext ctx) {
 
         //TODO clean it
+        //I cleaned it
         System.out.println("visit htmlElements");
         HtmlElements elements = new HtmlElements();
         HtmlElement element = new HtmlElement();
+        List<String> misc = new ArrayList<>();
 
-// in case i want to handle comments
-//
-//        if(!ctx.htmlMisc().isEmpty()){
-//            for(int i = 0; i < ctx.htmlMisc().size(); i++){
-//                misc = visitHtmlMisc(ctx.htmlMisc(i));
-//                elements1.setMisc(misc);
-//
-//            }
-//        }
+
+
+        if(!ctx.htmlMisc().isEmpty()){
+            for(int i = 0; i < ctx.htmlMisc().size(); i++){
+                misc.add(visitHtmlMisc(ctx.htmlMisc(i)));
+                elements.setMisc(misc);
+
+            }
+        }
 
         if(!ctx.htmlElement().isEmpty()){
             element = visitHtmlElement(ctx.htmlElement());
             elements.setHtmlElement(element);
-
         }
 
         return elements;
     }
 
     //TODO clean it
-// in case i want to handle comments
-//    @Override
-//    public List<String> visitHtmlMisc(HTMLParser.HtmlMiscContext ctx) {
-//        List<String> misc = new ArrayList<>();
-//        if(!ctx.htmlComment().isEmpty()){
-//            for(int i = 0; i < ctx.htmlComment().getChildCount(); i++)
-//            misc.add(visitHtmlComment(ctx.htmlComment()));
-//        }
-//    }
-//
+    //I cleaned it
+    @Override
+    public String visitHtmlMisc(HTMLParser.HtmlMiscContext ctx) {
+        String misc = null;
+        if(!ctx.htmlComment().isEmpty()){
+            misc = visitHtmlComment(ctx.htmlComment());
 
+        }
+        return misc;
+    }
+
+    @Override
+    public String visitHtmlComment(HTMLParser.HtmlCommentContext ctx) {
+        String comment = null;
+        if (ctx.HTML_COMMENT() != null) {
+            comment = ctx.HTML_COMMENT().getSymbol().getText();
+            System.out.println("comment : " + comment + "/n");
+        }
+        if (ctx.HTML_CONDITIONAL_COMMENT() != null) {
+            comment = ctx.HTML_CONDITIONAL_COMMENT().getSymbol().getText();
+            System.out.println("comment : " + comment + "/n");
+        }
+        return comment;
+    }
 
     @Override
     public HtmlElement visitHtmlElement(HTMLParser.HtmlElementContext ctx) {
         System.out.println("visit HtmlElement");
         HtmlElement element = new HtmlElement();
+        StringBuilder tagName = new StringBuilder();
         List<HtmlAttribute> attributeList = new ArrayList<>();
         HtmlContent htmlContent = new HtmlContent();
         MustacheExpression mustacheExpression = new MustacheExpression();
@@ -119,7 +135,10 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         if(ctx.TAG_NAME() != null){
             //TODO fix this
             System.out.println(ctx.TAG_NAME());
-            element.setTagName(ctx.TAG_NAME().toString());
+            //I think this is right
+            for (int i = 0; i < ctx.TAG_NAME().size(); i++) {
+                 tagName.append(ctx.TAG_NAME().get(i).getSymbol().getText());
+            }
         }
 
         if(!ctx.htmlAttribute().isEmpty()){
@@ -285,25 +304,36 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     @Override
     public HtmlContent visitHtmlContent(HTMLParser.HtmlContentContext ctx) {
         System.out.println("visit HtmlContent");
-        HtmlCharData charData = new HtmlCharData();
         List<HtmlCharData> charDataList = new ArrayList<>();
         List<HtmlElement> htmlElementList = new ArrayList<>();
+        List<String> comment = new ArrayList<>();
         HtmlContent htmlContent = new HtmlContent();
 
-        // TODO if we have some time let's do comments
+        // TODO check this plz i think you have to use (charDataList)
+        //I Fixed it
+        if (!ctx.htmlChardata().isEmpty()) {
+            for (int i = 0; i < ctx.htmlChardata().size(); i++) {
+                charDataList.add(visitHtmlChardata(ctx.htmlChardata(i)));
+                htmlContent.setHtmlCharDataList(charDataList);
+            }
+        }
+
         if (!ctx.htmlElement().isEmpty()) {
             for (int i = 0; i < ctx.htmlElement().size(); i++) {
                 htmlElementList.add(visitHtmlElement(ctx.htmlElement(i)));
                 htmlContent.setHtmlElement(htmlElementList);
-
-                if (!ctx.htmlChardata().isEmpty()) {
-                    charDataList.add(visitHtmlChardata(ctx.htmlChardata(i)));
-                    // TODO check this plz i think you have to use (charDataList)
-                    htmlContent.setCharData(charData);
-                }
             }
-
         }
+
+        if (!ctx.htmlComment().isEmpty()) {
+            for (int i = 0; i < ctx.htmlComment().size(); i++) {
+                comment.add(visitHtmlComment(ctx.htmlComment(i)));
+                htmlContent.setHtmlComment(comment);
+            }
+        }
+
+
+
         return htmlContent;
     }
 
@@ -356,6 +386,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             forExpression.setLeftVariable(leftVar);
 
             //TODO i don't think this's right (ctx.IN()) good but (ctx.variable()) ?!!
+            //I don't know if we have to save IN keyword or not
             if(ctx.IN() != null && !ctx.variable().isEmpty()){
                 rightVar= ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
                 forExpression.setRightVariable(rightVar);
@@ -363,6 +394,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             }
 
             // TODO may this WRONG this must be inside the last if condition
+            // it's either variable or array
         }else if(ctx.IN() != null && !ctx.array().isEmpty()){
 
             arrayBody = visitArray(ctx.array());
@@ -370,6 +402,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         }
 
         //TODO i think we must check if the iterator is equal the first var
+        //no we mustn't right now
         if(ctx.CP_CONTENT_SEMI_COLON() != null && !ctx.variable().isEmpty() && ctx.INDEX() != null){
             iterator = ctx.variable(3).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("Variable : " + iterator + "/t" + "IN" + ctx.INDEX().getSymbol().getText());
@@ -402,6 +435,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         //second alternative
         if(!ctx.objName().isEmpty()){
             objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("ObjectName : " + objName + "/t");
+            showHideExpression.setObjName(objName);
             if(!ctx.array().isEmpty()){
                 for(int i = 0; i < ctx.array().size(); i++){
                     arrayBodyList.add(visitArray(ctx.array(i)));
@@ -534,6 +569,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
                 }
             }
             //TODO what is this ???!!! note: if this is right we must add it to all of cases
+            //هي وقت عمر صار يتفنن وضاف بارامترات للقاعدة
             if (!ctx.parameters().isEmpty()) {
                 parametersList = visitParameters(ctx.parameters());
                 ifExpression.setParametersList(parametersList);
@@ -564,7 +600,8 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         if(!ctx.array().isEmpty()){
             // TODO this is STRING not array check before edit
-            for (int i = 0; i < ctx.array().; i++) {
+            // this is right
+            for (int i = 0; i < ctx.array().size(); i++) {
                 arrayBodyList.add(visitArray(ctx.array(i)));
                 modelExpression.setArrayBodies(arrayBodyList);
             }
@@ -647,6 +684,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         if (!ctx.objBody().isEmpty()) {
             // TODO OVERRIDE IT
+            // why??!
             objectBody = visitObjBody(ctx.objBody());
             literalValue.setObjBody(objectBody);
         }
@@ -857,7 +895,125 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
     @Override
     public BooleanExpression visitBooleanExpression(HTMLParser.BooleanExpressionContext ctx) {
+        System.out.println("visit BooleanExpression");
+        String leftVariable;
+        BooleanOperator operator = new BooleanOperator();
+        LiteralValue value = new LiteralValue();
+        String rightVariable;
 
+        String objName;
+        Property property = new Property();
+
+        BooleanExpression booleanExpression = new BooleanExpression();
+
+        if(!ctx.variable(0).isEmpty()){
+            leftVariable = ctx.variable(0).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("variable : " + leftVariable + "/t");
+            booleanExpression.setLeftVar(leftVariable);
+        }
+
+        if (!ctx.booleanOperator().isEmpty()) {
+            operator = visitBooleanOperator(ctx.booleanOperator());
+            booleanExpression.setBooleanOperator(operator);
+        }
+
+        if(!ctx.variable(1).isEmpty()){
+            rightVariable = ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("variable : " + rightVariable + "/n");
+            booleanExpression.setRightVar(rightVariable);
+        }
+
+        if (!ctx.value().isEmpty()) {
+            value = visitValue(ctx.value());
+            booleanExpression.setLiteralValue(value);
+        }
+
+        if (!ctx.objName().isEmpty()) {
+            objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("object name : " + objName);
+            booleanExpression.setObjName(objName);
+
+            if (!ctx.property().isEmpty()) {
+                property = visitProperty(ctx.property());
+                booleanExpression.setProperty(property);
+            }
+
+            if (!ctx.booleanOperator().isEmpty()) {
+                operator = visitBooleanOperator(ctx.booleanOperator());
+                booleanExpression.setBooleanOperator(operator);
+            }
+
+            if (!ctx.variable(0).isEmpty()) {
+                rightVariable = ctx.variable(0).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+                System.out.println("variabel : " + rightVariable);
+                booleanExpression.setRightVar(rightVariable);
+            }
+            if (!ctx.value().isEmpty()) {
+                value = visitValue(ctx.value());
+                booleanExpression.setLiteralValue(value);
+            }
+        }
+        return booleanExpression;
+    }
+
+    @Override
+    public BooleanOperator visitBooleanOperator(HTMLParser.BooleanOperatorContext ctx) {
+        System.out.println("visit BooleanOperator");
+        String operator;
+        BooleanOperator booleanOperator = new BooleanOperator();
+
+        if (ctx.CP_CONTENT_AND() != null) {
+            operator = ctx.CP_CONTENT_AND().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            booleanOperator.setBooleanOperator(operator);
+        }
+
+        if (ctx.CP_CONTENT_OR() != null) {
+            operator = ctx.CP_CONTENT_OR().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            booleanOperator.setBooleanOperator(operator);
+        }
+        if (ctx.CP_CONTENT_NOT() != null) {
+            operator = ctx.CP_CONTENT_NOT().getSymbol().getText();
+            System.out.println("op : " + operator + "/t");
+            booleanOperator.setBooleanOperator(operator);
+        }
+        return booleanOperator;
+    }
+
+    @Override
+    public ObjectBody visitObjBody(HTMLParser.ObjBodyContext ctx) {
+        System.out.println("visit ObjBody");
+        List<ObjectPair> objectPairList = new ArrayList<>();
+        ObjectBody objectBody = new ObjectBody();
+
+        if (!ctx.pair().isEmpty()) {
+            for (int i = 0; i < ctx.pair().size(); i++) {
+                objectPairList.add(visitPair(ctx.pair(i)));
+                objectBody.setObjPairs(objectPairList);
+            }
+        }
+        return objectBody;
+    }
+
+    @Override
+    public ObjectPair visitPair(HTMLParser.PairContext ctx) {
+        System.out.println("visit Pair");
+        String key;
+        LiteralValue value = new LiteralValue();
+        ObjectPair pair = new ObjectPair();
+
+        if (!ctx.key().isEmpty()) {
+            key = ctx.key().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("Key : " + key + "/t");
+            pair.setKey(key);
+        }
+
+        if (!ctx.value().isEmpty()) {
+            value = visitValue(ctx.value());
+            pair.setLiteralValue(value);
+        }
+        return pair;
     }
 
     // SAHER WORK //
@@ -869,7 +1025,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         MustacheExpression Mus = new MustacheExpression();
 
         if(ctx.mustacheVariable() != null){
-            Mus.setMustahceVariable((String) ctx.mustacheVariable().MUSTACHE_IDENTIFIER().getSymbol().getText());
+            Mus.setMustahceVariable(ctx.mustacheVariable().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
 
         if(ctx.oneLineCondition() != null){
@@ -916,17 +1072,17 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         //TODO لازم نعالج الحالات هون
         if(ctx.mustacheComparisonOperator() != null){
-            if(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText() != null){
+            if(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText());
-            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText() != null){
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText());
-            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText() != null){
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ() != null){
             MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText());
-            }else if(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText() != null){
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText());
-            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText() != null){
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText());
-            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText() != null){
+            }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText());
             }
         }

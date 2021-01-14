@@ -195,7 +195,7 @@ comparisonExpression
 
 booleanExpression
     : variable? booleanOperator (value | variable)
-    | objName CP_CONTENT_DOT property comparisonOperator (value | variable)
+    | objName CP_CONTENT_DOT property booleanOperator (value | variable)
     ;
 
 comparisonOperator
