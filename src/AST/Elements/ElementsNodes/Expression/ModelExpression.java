@@ -1,28 +1,54 @@
 package AST.Elements.ElementsNodes.Expression;
 
-import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
+import AST.Elements.ElementsNodes.Miscallenous.*;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModelExpression {
-    private String variable;
-    private List<ArrayBody> arrayBodies = new ArrayList<ArrayBody>();
+    private String variableName;
+    private LiteralValue value;
+    private FunctionCall funcCall;
+    private objWithProperty OWP;
+    private objArray OA;
 
-    public String getVariable() {
-        return variable;
+    public String getVariableName() {
+        return variableName;
     }
 
-    public void setVariable(String variable) {
-        this.variable = variable;
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
     }
 
-    public List<ArrayBody> getArrayBodies() {
-        return arrayBodies;
+    public LiteralValue getValue() {
+        return value;
     }
 
-    public void setArrayBodies(List<ArrayBody> arrayBodies) {
-        this.arrayBodies = arrayBodies;
+    public void setValue(LiteralValue value) {
+        this.value = value;
     }
-}
+
+    public FunctionCall getFuncCall() {
+        return funcCall;
+    }
+
+    public void setFuncCall(FunctionCall funcCall) {
+        this.funcCall = funcCall;
+    }
+
+    public objWithProperty getOWP() {
+        return OWP;
+    }
+
+    public void setOWP(objWithProperty OWP) {
+        this.OWP = OWP;
+    }
+
+    public objArray getOA() {
+        return OA;
+    }
+
+    public void setOA(objArray OA) {
+        this.OA = OA;
+    }}

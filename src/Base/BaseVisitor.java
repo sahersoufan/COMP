@@ -19,7 +19,7 @@ import javax.swing.text.ElementIterator;
 import java.security.spec.RSAOtherPrimeInfo;
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO changes in all of expression base visitors is yours
 public class BaseVisitor extends HTMLParserBaseVisitor {
 
 
@@ -58,7 +58,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     public List<String> visitScriptletOrSeaWs(HTMLParser.ScriptletOrSeaWsContext ctx) {
 
         System.out.println("visit ScriptLetOrSeaWs");
-        // TODO CHECK WHY WE DO IT WITH LIST
+        // DO CHECK WHY WE DO IT WITH LIST
         // grammar says (scriptLetOrSeaWs)* that's why we used list
         List<String> scriptLetOrSeaWs = new ArrayList<>();
 
@@ -72,8 +72,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     @Override
     public HtmlElements visitHtmlElements(HTMLParser.HtmlElementsContext ctx) {
 
-        //TODO clean it
-        //I cleaned it
         System.out.println("visit htmlElements");
         HtmlElements elements = new HtmlElements();
         HtmlElement element = new HtmlElement();
@@ -97,8 +95,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         return elements;
     }
 
-    //TODO clean it
-    //I cleaned it
+
     @Override
     public String visitHtmlMisc(HTMLParser.HtmlMiscContext ctx) {
         String misc = null;
@@ -133,8 +130,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         MustacheExpression mustacheExpression = new MustacheExpression();
 
         if(ctx.TAG_NAME() != null){
-            //TODO fix this
-            //I think this is right
+
             openTagName = ctx.TAG_NAME().get(0).getSymbol().getText();
             System.out.println("OPEN TagName : " + openTagName + "\t");
             closeTagName = ctx.TAG_NAME().get(1).getSymbol().getText();
@@ -309,8 +305,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         List<String> comment = new ArrayList<>();
         HtmlContent htmlContent = new HtmlContent();
 
-        // TODO check this plz i think you have to use (charDataList)
-        //I Fixed it
+
         if (!ctx.htmlChardata().isEmpty()) {
             for (int i = 0; i < ctx.htmlChardata().size(); i++) {
                 charDataList.add(visitHtmlChardata(ctx.htmlChardata(i)));
@@ -385,24 +380,19 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             System.out.println("Variable : " + leftVar + "\t");
             forExpression.setLeftVariable(leftVar);
 
-            //TODO i don't think this's right (ctx.IN()) good but (ctx.variable()) ?!!
-            //I don't know if we have to save IN keyword or not
-            if(ctx.IN() != null && !ctx.variable().isEmpty()){
+          if(ctx.IN() != null && !ctx.variable().isEmpty()){
                 rightVar= ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
                 forExpression.setRightVariable(rightVar);
                 System.out.println("Variable : " + rightVar + "\t");
             }
 
-            // TODO may this WRONG this must be inside the last if condition
-            // it's either variable or array
         }else if(ctx.IN() != null && !ctx.array().isEmpty()){
 
             arrayBody = visitArray(ctx.array());
             forExpression.setArr(arrayBody);
         }
 
-        //TODO i think we must check if the iterator is equal the first var
-        //no we mustn't right now
+
         if(ctx.CP_CONTENT_SEMI_COLON() != null && !ctx.variable().isEmpty() && ctx.INDEX() != null){
             iterator = ctx.variable(2).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("Variable : " + iterator + " = " + ctx.INDEX().getSymbol().getText());
@@ -568,9 +558,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
                     ifExpression.setArrayBodies(arrayBodyList);
                 }
             }
-            //TODO what is this ???!!! note: if this is right we must add it to all of cases
-            //هي وقت عمر صار يتفنن وضاف بارامترات للقاعدة
-            if (!ctx.parameters().isEmpty()) {
+          if (!ctx.parameters().isEmpty()) {
                 parametersList = visitParameters(ctx.parameters());
                 ifExpression.setParametersList(parametersList);
             }
@@ -599,9 +587,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         }
 
         if(!ctx.array().isEmpty()){
-            // TODO this is STRING not array check before edit
-            // this is right
-            for (int i = 0; i < ctx.array().size(); i++) {
+          for (int i = 0; i < ctx.array().size(); i++) {
                 arrayBodyList.add(visitArray(ctx.array(i)));
                 modelExpression.setArrayBodies(arrayBodyList);
             }
@@ -683,9 +669,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         }
 
         if (!ctx.objBody().isEmpty()) {
-            // TODO OVERRIDE IT
-            // why??!
-            objectBody = visitObjBody(ctx.objBody());
+         objectBody = visitObjBody(ctx.objBody());
             literalValue.setObjBody(objectBody);
         }
         return literalValue;
@@ -1073,7 +1057,6 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         }
 
-        //TODO لازم نعالج الحالات هون
         if(ctx.mustacheComparisonOperator() != null){
             if(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText());

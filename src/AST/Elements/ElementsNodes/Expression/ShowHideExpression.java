@@ -1,21 +1,25 @@
 package AST.Elements.ElementsNodes.Expression;
 
-import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
-import AST.Elements.ElementsNodes.Miscallenous.FunctionCall;
-import AST.Elements.ElementsNodes.Miscallenous.LiteralValue;
-import AST.Elements.ElementsNodes.Miscallenous.Property;
+import AST.Elements.ElementsNodes.Miscallenous.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShowHideExpression {
 
-    private LiteralValue value = new LiteralValue();
-    private String objName;
-    private List<ArrayBody> arr = new ArrayList<ArrayBody>();
-    private Property property = new Property();
-    private FunctionCall funcCall = new FunctionCall();
-    private String variable;
+    private String variableName;
+    private LiteralValue value;
+    private FunctionCall funcCall;
+    private objWithProperty OWP;
+    private objArray OA;
+
+    public String getVariableName() {
+        return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
 
     public LiteralValue getValue() {
         return value;
@@ -23,30 +27,6 @@ public class ShowHideExpression {
 
     public void setValue(LiteralValue value) {
         this.value = value;
-    }
-
-    public String getObjName() {
-        return objName;
-    }
-
-    public void setObjName(String objName) {
-        this.objName = objName;
-    }
-
-    public List<ArrayBody> getArr() {
-        return arr;
-    }
-
-    public void setArr(List<ArrayBody> arr) {
-        this.arr = arr;
-    }
-
-    public Property getProperty() {
-        return property;
-    }
-
-    public void setProperty(Property property) {
-        this.property = property;
     }
 
     public FunctionCall getFuncCall() {
@@ -57,16 +37,19 @@ public class ShowHideExpression {
         this.funcCall = funcCall;
     }
 
-    public String getVariable() {
-        return variable;
+    public objWithProperty getOWP() {
+        return OWP;
     }
 
-    public void setVariable(String variable) {
-        this.variable = variable;
+    public void setOWP(objWithProperty OWP) {
+        this.OWP = OWP;
     }
 
+    public objArray getOA() {
+        return OA;
+    }
 
-
-
-
+    public void setOA(objArray OA) {
+        this.OA = OA;
+    }
 }

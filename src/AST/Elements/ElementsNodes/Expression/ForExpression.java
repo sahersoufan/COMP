@@ -2,12 +2,14 @@ package AST.Elements.ElementsNodes.Expression;
 
 import AST.Elements.ElementsNodes.Miscallenous.ArrayBody;
 import AST.Elements.ElementsNodes.Miscallenous.ObjectBody;
+import AST.Elements.ElementsNodes.Miscallenous.objArray;
 
 public class ForExpression {
     private String leftVariable;
     private String rightVariable;
     private String iterator;
     private ArrayBody arr = new ArrayBody();
+    private objArray OA;
     private String objName;
     private ObjectBody objBody = new ObjectBody();
 
@@ -57,5 +59,13 @@ public class ForExpression {
 
     public void setObjBody(ObjectBody objBody) {
         this.objBody = objBody;
+    }
+
+    public objArray getOA() {
+        return OA;
+    }
+
+    public void setOA(objArray OA) {
+        this.OA = OA;
     }
 }

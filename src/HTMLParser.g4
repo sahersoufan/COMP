@@ -3,7 +3,6 @@ parser grammar HTMLParser;
 
 options { tokenVocab=HTMLLexer; }
 
-// TODO we need to check all (array) cause may it have proparity
 htmlDocument
     : scriptletOrSeaWs* XML? scriptletOrSeaWs* DTD? scriptletOrSeaWs* htmlElements*
     ;
@@ -74,24 +73,30 @@ mustacheExpression
 
 appExpression
     : variable
+    | value
+    | objArray
+    | functionCall
+    | objName CP_CONTENT_DOT property
     ;
 
 forExpression
-    : variable ( IN   (variable | array ) (CP_CONTENT_SEMI_COLON variable CP_CONTENT_EQUALS INDEX)? )?
+    : variable ( IN   (variable | array | objArray ) (CP_CONTENT_SEMI_COLON variable CP_CONTENT_EQUALS INDEX)? )?
     | variable CP_CONTENT_COMMA variable IN (objName | objBody)
     ;
 
 showHideExpression
     : value
-    | objName (array)* CP_CONTENT_DOT property
-    | functionCall
     | variable
+    | objArray
+    | objName CP_CONTENT_DOT property
+    | functionCall
     ;
 
 switchExpression
     : value
     | variable
-    | objName (array)* CP_CONTENT_DOT property
+    | objArray
+    | objName CP_CONTENT_DOT property
     ;
 
 switchCaseExpression
@@ -104,16 +109,22 @@ ifExpression
     | booleanExpression
     | variable
     | functionCall
-    | objName (array)* (CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)? CP_CONTENT_DOT property
+    | objArray
+    | objName CP_CONTENT_DOT property
     ;
 
 modelExpression
     : variable
-    | array (array)* // TODO may it's have proparity
+    | value
+    | objArray
+    | functionCall
+    | objName CP_CONTENT_DOT property
     ;
 
 annotationExpression
     : functionCall
+    | objArray
+    | variable
     ;
 
 variable
@@ -124,11 +135,6 @@ variableName
     : CP_CONTENT_IDENTIFIER
     ;
 
-//obj
-//    : objName CP_EQUALS objBody
-//    |
-//    ;
-
 objName
     : CP_CONTENT_IDENTIFIER
     ;
@@ -138,10 +144,15 @@ objBody
     | CP_CONTENT_OPEN_CURLY_BRACKETS CP_CONTENT_CLOSE_CURLY_BRACKETS
     ;
 
+objArray
+    : arrName (array)+ (CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)? (CP_CONTENT_DOT property)?
+    ;
+
+arrName
+    : CP_CONTENT_IDENTIFIER
+    ;
 property
     : CP_CONTENT_IDENTIFIER
-    // TODO check this rule (array)* ??!
-    | functionName array* CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR
     ;
 
 pair
@@ -152,7 +163,6 @@ key
     : CP_CONTENT_IDENTIFIER
     ;
 
-//TODO must redo this rule
 value
     : CP_CONTENT_STRING
     | CP_CONTENT_NUMBER
@@ -163,7 +173,6 @@ value
     | CP_CONTENT_NULL
     ;
 
-//TODO what is this ???!!
 functionCall
     : functionName CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR
     ;
