@@ -1,5 +1,22 @@
 <p cp-show="obj.steve" cp-for="x in t; i = index"></p>
 <class cp-for="x in t; i = index">steve</class>
 <p cp-if="x < y"> True </p>
+<must>asd{{xx}}</must>
+<must1>{{a < 10 ? true : false}}</must1>
+
+<must2>
+<script> </script>
+aaaaaaaaaaaaaaaaaa
+
+{{ez |
+
+io : "Assassin"}}
+bbbbbbbbbbbbbbbb
+<p>
+
+cccccccccccccccccc
+</p>
+</must2>
+
 
 

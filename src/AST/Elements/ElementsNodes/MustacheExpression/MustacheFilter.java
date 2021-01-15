@@ -1,7 +1,6 @@
 package AST.Elements.ElementsNodes.MustacheExpression;
 
-public class MustacheFilter {
-    //TODO implement MustacheFilter
+public class MustacheFilter{
     private String modelName;
     private String formatName;
     private String formatType;
