@@ -16,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            String source = "C:\\Users\\steve\\Desktop\\New compiler Project\\COMP\\src\\samples.txt";
+            String source = "E:\\forth year\\COMP\\src\\samples.txt";
             CharStream cs = fromFileName(source);
             HTMLLexer lexer = new HTMLLexer(cs);
             CommonTokenStream token  = new CommonTokenStream(lexer);

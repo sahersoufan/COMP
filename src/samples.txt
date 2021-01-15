@@ -1,0 +1,5 @@
+<p cp-show="obj.steve" cp-for="x in t; i = index"></p>
+<class cp-for="x in t; i = index">steve</class>
+<p cp-if="x < y"> True </p>
+
+
