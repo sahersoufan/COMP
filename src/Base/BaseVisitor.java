@@ -1054,29 +1054,40 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         if(ctx.mustacheComparisonOperator() != null){
             if(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_EQUAL_TO().getSymbol().getText());
             }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_GREATER_EQ().getSymbol().getText());
             }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ() != null){
             MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_LESS_EQ().getSymbol().getText());
             }else if(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_NOT_EQUAL().getSymbol().getText());
             }else if(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_LESS_THAN().getSymbol().getText());
             }else if(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN() != null){
                 MCE.setOp(ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText());
+                System.out.println("mustacheComparisonOp : " + ctx.mustacheComparisonOperator().MUSTACHE_GREATER_THAN().getSymbol().getText());
             }
         }
         if(ctx.mustacheValue() != null){
             if(ctx.mustacheValue().MUSTACHE_FALSE().getSymbol().getText() != null){
                 MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_FALSE().getSymbol().getText());
+                System.out.println("mustacheVA : " + ctx.mustacheValue().MUSTACHE_FALSE().getSymbol().getText());
             }else if(ctx.mustacheValue().MUSTACHE_TRUE().getSymbol().getText() != null) {
                 MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_TRUE().getSymbol().getText());
+                System.out.println("mustacheVA : " + ctx.mustacheValue().MUSTACHE_TRUE().getSymbol().getText());
             }else if(ctx.mustacheValue().MUSTACHE_NULL().getSymbol().getText() != null) {
                 MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_NULL().getSymbol().getText());
+                System.out.println("mustacheVA : " + ctx.mustacheValue().MUSTACHE_NULL().getSymbol().getText());
             }else if(ctx.mustacheValue().MUSTACHE_NUMBER().getSymbol().getText() != null) {
                 MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_NUMBER().getSymbol().getText());
+                System.out.println("mustacheVA : " + ctx.mustacheValue().MUSTACHE_NUMBER().getSymbol().getText());
             }else if(ctx.mustacheValue().MUSTACHE_STRING().getSymbol().getText() != null){
                 MCE.setMustachevalue(ctx.mustacheValue().MUSTACHE_STRING().getSymbol().getText());
+                System.out.println("mustacheVA : " + ctx.mustacheValue().MUSTACHE_STRING().getSymbol().getText());
             }
         }
 
@@ -1089,14 +1100,19 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         IfTrue IT = new IfTrue();
         if (ctx.MUSTACHE_NULL().getSymbol().getText() != null){
             IT.setIfTrue(ctx.MUSTACHE_NULL().getSymbol().getText());
+            System.out.println("mustacheIT : " + ctx.MUSTACHE_NULL().getSymbol().getText());
         }else if(ctx.MUSTACHE_TRUE().getSymbol().getText() != null){
             IT.setIfTrue(ctx.MUSTACHE_TRUE().getSymbol().getText());
+            System.out.println("mustacheIT : " + ctx.MUSTACHE_TRUE().getSymbol().getText());
         }else if(ctx.MUSTACHE_FALSE().getSymbol().getText() != null){
             IT.setIfTrue(ctx.MUSTACHE_FALSE().getSymbol().getText());
+            System.out.println("mustacheIT : " + ctx.MUSTACHE_FALSE().getSymbol().getText());
         }else if(ctx.MUSTACHE_STRING().getSymbol().getText() != null){
             IT.setIfTrue(ctx.MUSTACHE_STRING().getSymbol().getText());
+            System.out.println("mustacheIT : " + ctx.MUSTACHE_STRING().getSymbol().getText());
         }else if(ctx.MUSTACHE_NUMBER().getSymbol().getText() != null){
             IT.setIfTrue(ctx.MUSTACHE_NUMBER().getSymbol().getText());
+            System.out.println("mustacheIT : " + ctx.MUSTACHE_NUMBER().getSymbol().getText());
         }
 
         return IT;
@@ -1108,14 +1124,19 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         IfFalse IF = new IfFalse();
         if (ctx.MUSTACHE_NULL().getSymbol().getText() != null){
             IF.setIfFalse(ctx.MUSTACHE_NULL().getSymbol().getText());
+            System.out.println("mustacheIF : " + ctx.MUSTACHE_NULL().getSymbol().getText());
         }else if(ctx.MUSTACHE_TRUE().getSymbol().getText() != null){
             IF.setIfFalse(ctx.MUSTACHE_TRUE().getSymbol().getText());
+            System.out.println("mustacheIF : " + ctx.MUSTACHE_TRUE().getSymbol().getText());
         }else if(ctx.MUSTACHE_FALSE().getSymbol().getText() != null){
             IF.setIfFalse(ctx.MUSTACHE_FALSE().getSymbol().getText());
+            System.out.println("mustacheIF : " + ctx.MUSTACHE_FALSE().getSymbol().getText());
         }else if(ctx.MUSTACHE_STRING().getSymbol().getText() != null){
             IF.setIfFalse(ctx.MUSTACHE_STRING().getSymbol().getText());
+            System.out.println("mustacheIF : " + ctx.MUSTACHE_STRING().getSymbol().getText());
         }else if(ctx.MUSTACHE_NUMBER().getSymbol().getText() != null){
             IF.setIfFalse(ctx.MUSTACHE_NUMBER().getSymbol().getText());
+            System.out.println("mustacheIF : " + ctx.MUSTACHE_NUMBER().getSymbol().getText());
         }
 
         return IF;
@@ -1130,12 +1151,15 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         if(ctx.modelName() != null){
             MF.setModelName((String) ctx.modelName().MUSTACHE_IDENTIFIER().getSymbol().getText());
+            System.out.println("`mustache modelName : " + ctx.modelName().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
         if(ctx.formatName() != null){
             MF.setFormatName((String) ctx.formatName().MUSTACHE_IDENTIFIER().getSymbol().getText());
+            System.out.println("`mustache formatName : " + ctx.formatName().MUSTACHE_IDENTIFIER().getSymbol().getText());
         }
         if(ctx.formatType() != null){
             MF.setFormatType((String) ctx.formatType().MUSTACHE_STRING().getSymbol().getText());
+            System.out.println("`mustache formatType : " + ctx.formatType().MUSTACHE_STRING().getSymbol().getText());
         }
         return MF;
 
