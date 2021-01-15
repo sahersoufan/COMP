@@ -1,14 +1,17 @@
 package AST.Elements.ElementsNodes.Expression;
 
 import AST.Elements.ElementsNodes.Miscallenous.*;
+import generated.HTMLParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SwitchExpression {
+public class ashmExpression {
+
     private String variable;
     private LiteralValue value = new LiteralValue();
     private ObjArray objArray = new ObjArray();
+    private FunctionCall functionCall = new FunctionCall();
     private String objName;
     private Property property = new Property();
 
@@ -34,6 +37,14 @@ public class SwitchExpression {
 
     public void setObjArray(ObjArray objArray) {
         this.objArray = objArray;
+    }
+
+    public FunctionCall getFunctionCall() {
+        return functionCall;
+    }
+
+    public void setFunctionCall(FunctionCall functionCall) {
+        this.functionCall = functionCall;
     }
 
     public String getObjName() {

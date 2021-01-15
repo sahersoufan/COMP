@@ -1,20 +1,14 @@
 package AST.Elements.ElementsNodes.Expression;
 
 import AST.Elements.ElementsNodes.Miscallenous.FunctionCall;
-import AST.Elements.ElementsNodes.Miscallenous.objArray;
+import AST.Elements.ElementsNodes.Miscallenous.ObjArray;
+
 
 public class AnnotationExpression {
 
-    private FunctionCall functionCall = new FunctionCall();
     private String variableName;
-    private objArray OA;
-    public FunctionCall getFunctionCall() {
-        return functionCall;
-    }
-
-    public void setFunctionCall(FunctionCall functionCall) {
-        this.functionCall = functionCall;
-    }
+    private FunctionCall functionCall = new FunctionCall();
+    private ObjArray objArray = new ObjArray();
 
     public String getVariableName() {
         return variableName;
@@ -24,11 +18,19 @@ public class AnnotationExpression {
         this.variableName = variableName;
     }
 
-    public objArray getOA() {
-        return OA;
+    public FunctionCall getFunctionCall() {
+        return functionCall;
     }
 
-    public void setOA(objArray OA) {
-        this.OA = OA;
+    public void setFunctionCall(FunctionCall functionCall) {
+        this.functionCall = functionCall;
+    }
+
+    public ObjArray getObjArray() {
+        return objArray;
+    }
+
+    public void setObjArray(ObjArray objArray) {
+        this.objArray = objArray;
     }
 }

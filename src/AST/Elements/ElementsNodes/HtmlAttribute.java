@@ -9,15 +9,11 @@ public class HtmlAttribute {
     private String name;
     private String value;
     private AnnotationExpression annotationExpression;
-    private AppExpression appExpression;
     private ForExpression forExpression;
     private IfExpression ifExpression;
-    private ModelExpression modelExpression;
-    private ShowHideExpression showHideExpression;
+    private ashmExpression ashmExpression;
     private SwitchCaseExpression switchCaseExpression;
     private SwitchExpression switchExpression;
-
-
 
     public String getName() {
         return name;
@@ -43,14 +39,6 @@ public class HtmlAttribute {
         this.annotationExpression = annotationExpression;
     }
 
-    public AppExpression getAppExpression() {
-        return appExpression;
-    }
-
-    public void setAppExpression(AppExpression appExpression) {
-        this.appExpression = appExpression;
-    }
-
     public ForExpression getForExpression() {
         return forExpression;
     }
@@ -67,20 +55,12 @@ public class HtmlAttribute {
         this.ifExpression = ifExpression;
     }
 
-    public ModelExpression getModelExpression() {
-        return modelExpression;
+    public AST.Elements.ElementsNodes.Expression.ashmExpression getAshmExpression() {
+        return ashmExpression;
     }
 
-    public void setModelExpression(ModelExpression modelExpression) {
-        this.modelExpression = modelExpression;
-    }
-
-    public ShowHideExpression getShowHideExpression() {
-        return showHideExpression;
-    }
-
-    public void setShowHideExpression(ShowHideExpression showHideExpression) {
-        this.showHideExpression = showHideExpression;
+    public void setAshmExpression(AST.Elements.ElementsNodes.Expression.ashmExpression ashmExpression) {
+        this.ashmExpression = ashmExpression;
     }
 
     public SwitchCaseExpression getSwitchCaseExpression() {

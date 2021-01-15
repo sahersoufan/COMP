@@ -9,16 +9,13 @@ import AST.Elements.ElementsNodes.MustacheExpression.*;
 import AST.Elements.HtmlElement;
 import AST.Elements.HtmlElements;
 import AST.HtmlDocument;
+import com.sun.security.jgss.GSSUtil;
 import generated.HTMLParser;
 import generated.HTMLParserBaseVisitor;
-import org.stringtemplate.v4.misc.AmbiguousMatchException;
-import org.w3c.dom.html.HTMLAreaElement;
 
-import javax.swing.*;
-import javax.swing.text.ElementIterator;
-import java.security.spec.RSAOtherPrimeInfo;
 import java.util.ArrayList;
 import java.util.List;
+
 // TODO changes in all of expression base visitors is yours
 public class BaseVisitor extends HTMLParserBaseVisitor {
 
@@ -165,13 +162,11 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         String attributeName;
         String tagName;
         String attributeValue;
-        AppExpression appExpression = new AppExpression();
         ForExpression forExpression = new ForExpression();
-        ShowHideExpression showHideExpression = new ShowHideExpression();
+        ashmExpression ashmExpression = new ashmExpression();
         SwitchCaseExpression switchCaseExpression = new SwitchCaseExpression();
         SwitchExpression switchExpression = new SwitchExpression();
         IfExpression ifExpression = new IfExpression();
-        ModelExpression modelExpression = new ModelExpression();
         AnnotationExpression annotationExpression = new AnnotationExpression();
 
 
@@ -185,9 +180,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             attributeName = ctx.CP_APP().getSymbol().getText();
             System.out.println("Attribute : " + attributeName + "\t");
             htmlAttribute.setName(attributeName);
-            if(!ctx.appExpression().isEmpty()){
-                appExpression = visitAppExpression(ctx.appExpression());
-                htmlAttribute.setAppExpression(appExpression);
+            if(!ctx.ashmExpression().isEmpty()){
+                ashmExpression = visitAshmExpression(ctx.ashmExpression());
+                htmlAttribute.setAshmExpression(ashmExpression);
             }
         }
 
@@ -205,9 +200,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             attributeName = ctx.CP_SHOW().getSymbol().getText();
             System.out.println("Attribute : " + attributeName + "\t");
             htmlAttribute.setName(attributeName);
-            if(!ctx.showHideExpression().isEmpty()){
-                showHideExpression = visitShowHideExpression(ctx.showHideExpression());
-                htmlAttribute.setShowHideExpression(showHideExpression);
+            if(!ctx.ashmExpression().isEmpty()){
+                ashmExpression = visitAshmExpression(ctx.ashmExpression());
+                htmlAttribute.setAshmExpression(ashmExpression);
             }
         }
 
@@ -215,9 +210,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             attributeName = ctx.CP_HIDE().getSymbol().getText();
             System.out.println("Attribute : " + attributeName + "\t");
             htmlAttribute.setName(attributeName);
-            if(!ctx.showHideExpression().isEmpty()){
-                showHideExpression = visitShowHideExpression(ctx.showHideExpression());
-                htmlAttribute.setShowHideExpression(showHideExpression);
+            if(!ctx.ashmExpression().isEmpty()){
+                ashmExpression = visitAshmExpression(ctx.ashmExpression());
+                htmlAttribute.setAshmExpression(ashmExpression);
             }
         }
 
@@ -256,9 +251,9 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             attributeName = ctx.CP_MODEL().getSymbol().getText();
             System.out.println("Attribute : " + attributeName + "\t");
             htmlAttribute.setName(attributeName);
-            if(!ctx.modelExpression().isEmpty()){
-                modelExpression = visitModelExpression(ctx.modelExpression());
-                htmlAttribute.setModelExpression(modelExpression);
+            if(!ctx.ashmExpression().isEmpty()){
+                ashmExpression = visitAshmExpression(ctx.ashmExpression());
+                htmlAttribute.setAshmExpression(ashmExpression);
             }
         }
 
@@ -351,17 +346,50 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
     }
 
+
     @Override
-    public AppExpression visitAppExpression(HTMLParser.AppExpressionContext ctx) {
-        System.out.println("visit AppExpression");
-        String variableName;
-        AppExpression appExpression = new AppExpression();
-        if(!ctx.variable().isEmpty()){
-            variableName = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("Variable Name : " + variableName + "\t");
-            appExpression.setVariableName(variableName);
+    public ashmExpression visitAshmExpression(HTMLParser.AshmExpressionContext ctx) {
+        System.out.println("visit ashmExpression");
+        String variable;
+        LiteralValue value = new LiteralValue();
+        ObjArray objArray = new ObjArray();
+        FunctionCall functionCall = new FunctionCall();
+        String objName;
+        Property property = new Property();
+        ashmExpression ashmExpression = new ashmExpression();
+
+        if (ctx.variable() != null) {
+            variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("Variable : " + variable);
+            ashmExpression.setVariable(variable);
         }
-        return appExpression;
+
+        if (ctx.value() != null) {
+            value = visitValue(ctx.value());
+            ashmExpression.setValue(value);
+        }
+
+        if (ctx.objArray() != null) {
+            objArray = visitObjArray(ctx.objArray());
+            ashmExpression.setObjArray(objArray);
+        }
+
+        if (ctx.functionCall() != null) {
+            functionCall = visitFunctionCall(ctx.functionCall());
+            ashmExpression.setFunctionCall(functionCall);
+        }
+
+        if (ctx.objName() != null) {
+            objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("object name : " + objName);
+            ashmExpression.setObjName(objName);
+        }
+
+        if (ctx.property() != null) {
+            property = visitProperty(ctx.property());
+            ashmExpression.setProperty(property);
+        }
+        return ashmExpression;
     }
 
     @Override
@@ -370,26 +398,32 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         String leftVar;
         String rightVar;
         String iterator;
-        ArrayBody arrayBody = new ArrayBody();
+        ArrayBody arrayBody;
+        ObjArray objArray;
         String objName;
         ObjectBody objectBody = new ObjectBody();
         ForExpression forExpression = new ForExpression();
 
-        if (!ctx.variable().isEmpty()){
+        if (ctx.variable() != null){
             leftVar = ctx.variable(0).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("Variable : " + leftVar + "\t");
             forExpression.setLeftVariable(leftVar);
 
-          if(ctx.IN() != null && !ctx.variable().isEmpty()){
-                rightVar= ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-                forExpression.setRightVariable(rightVar);
-                System.out.println("Variable : " + rightVar + "\t");
-            }
+            rightVar= ctx.variable(1).variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            forExpression.setRightVariable(rightVar);
+            System.out.println("Variable : " + rightVar + "\t");
 
-        }else if(ctx.IN() != null && !ctx.array().isEmpty()){
 
+        }
+
+        if(ctx.array() != null){
             arrayBody = visitArray(ctx.array());
             forExpression.setArr(arrayBody);
+        }
+
+        if (ctx.objArray() != null) {
+            objArray = visitObjArray(ctx.objArray());
+            forExpression.setObjArray(objArray);
         }
 
 
@@ -400,60 +434,23 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
 
         }
 
+        if (ctx.objName() != null) {
+            objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("objName : " + objName);
+            forExpression.setObjName(objName);
+        }
+
+        if (ctx.objBody() != null) {
+            objectBody = visitObjBody(ctx.objBody());
+            forExpression.setObjBody(objectBody);
+        }
+
         return forExpression;
 
 
     }
 
-    @Override
-    public ShowHideExpression visitShowHideExpression(HTMLParser.ShowHideExpressionContext ctx) {
-        System.out.println("visit ShowHideExpression");
-        LiteralValue literalValue = new LiteralValue();
-        String objName;
-        List<ArrayBody> arrayBodyList = new ArrayList<>();
-        Property property = new Property();
-        FunctionCall functionCall = new FunctionCall();
-        String variable;
-        ShowHideExpression showHideExpression = new ShowHideExpression();
 
-        //first alternative
-        if(ctx.value() != null){
-            literalValue = visitValue(ctx.value());
-            showHideExpression.setValue(literalValue);
-        }
-
-        //second alternative
-        if(!ctx.objName().isEmpty()){
-            objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("ObjectName : " + objName + "\t");
-            showHideExpression.setObjName(objName);
-            if(!ctx.array().isEmpty()){
-                for(int i = 0; i < ctx.array().size(); i++){
-                    arrayBodyList.add(visitArray(ctx.array(i)));
-                    showHideExpression.setArr(arrayBodyList);
-                }
-            }
-            if(!ctx.property().isEmpty()){
-                property = visitProperty(ctx.property());
-                showHideExpression.setProperty(property);
-            }
-
-        }
-
-        //third alternative
-        if(ctx.functionCall() != null){
-            functionCall = visitFunctionCall(ctx.functionCall());
-            showHideExpression.setFuncCall(functionCall);
-        }
-
-        //fourth alternative
-        if(ctx.variable() != null){
-            variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("Variable : " + variable + "\n");
-            showHideExpression.setVariable(variable);
-        }
-         return showHideExpression;
-    }
 
     @Override
     public SwitchCaseExpression visitSwitchCaseExpression(HTMLParser.SwitchCaseExpressionContext ctx) {
@@ -477,39 +474,39 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     @Override
     public SwitchExpression visitSwitchExpression(HTMLParser.SwitchExpressionContext ctx) {
         System.out.println("visit SwitchExpression");
-        LiteralValue value = new LiteralValue();
         String variable;
+        LiteralValue value = new LiteralValue();
+        ObjArray objArray = new ObjArray();
         String objName;
-        List<ArrayBody> arrayBodyList = new ArrayList<>();
         Property property = new Property();
         SwitchExpression switchExpression = new SwitchExpression();
 
-        if (!ctx.value().isEmpty()) {
+        if (ctx.value() != null) {
             value = visitValue(ctx.value());
             switchExpression.setValue(value);
         }
 
-        if (!ctx.variable().isEmpty()) {
+        if (ctx.variable() != null) {
             variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("Variable : " + variable + "\n");
             switchExpression.setVariable(variable);
         }
 
-        if(!ctx.objName().isEmpty()){
+        if (ctx.objArray() != null) {
+            objArray = visitObjArray(ctx.objArray());
+            switchExpression.setObjArray(objArray);
+        }
+
+        if(ctx.objName() != null){
             objName  = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             switchExpression.setObjName(objName);
-
-            if (!ctx.array().isEmpty()) {
-                for (int i = 0; i < ctx.array().size(); i++) {
-                    arrayBodyList.add(visitArray(ctx.array(i)));
-                }
-            }
-
-            if (!ctx.property().isEmpty()) {
-                property = visitProperty(ctx.property());
-                switchExpression.setProperty(property);
-            }
         }
+
+        if (ctx.property() != null) {
+            property = visitProperty(ctx.property());
+            switchExpression.setProperty(property);
+        }
+
         return switchExpression;
     }
 
@@ -520,95 +517,112 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
         BooleanExpression booleanExpression = new BooleanExpression();
         String variable;
         FunctionCall functionCall = new FunctionCall();
+        ObjArray objArray = new ObjArray();
         String objName;
-        List<ArrayBody> arrayBodyList = new ArrayList<>();
-        FunctionParametersList parametersList = new FunctionParametersList();
         Property property = new Property();
         IfExpression ifExpression = new IfExpression();
 
         if (!ctx.comparisonExpression().isEmpty()) {
             comparisonExpression = visitComparisonExpression(ctx.comparisonExpression());
-            ifExpression.setComparsionExpression(comparisonExpression);
+            ifExpression.setComparisonExpression(comparisonExpression);
         }
 
-        if (!ctx.booleanExpression().isEmpty()) {
+        if (ctx.booleanExpression() != null) {
             booleanExpression = visitBooleanExpression(ctx.booleanExpression());
             ifExpression.setBooleanExpression(booleanExpression);
         }
 
-        if (!ctx.functionCall().isEmpty()) {
+        if (ctx.functionCall() != null) {
             functionCall = visitFunctionCall(ctx.functionCall());
             ifExpression.setFunctionCall(functionCall);
         }
 
-        if (!ctx.variable().isEmpty()) {
+        if (ctx.variable() != null) {
             variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("Variable : " + variable + "\n");
-            ifExpression.setVariable(variable);
+            ifExpression.setVariableName(variable);
         }
 
-        if (!ctx.objName().isEmpty()) {
+        if (ctx.objArray() != null) {
+            objArray = visitObjArray(ctx.objArray());
+            ifExpression.setObjArray(objArray);
+        }
+
+        if (ctx.objName() != null) {
             objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("ObjectName : " + objName + "\t");
             ifExpression.setObjName(objName);
-
-            if (!ctx.array().isEmpty()) {
-                for (int i = 0; i < ctx.array().size(); i++) {
-                    arrayBodyList.add(visitArray(ctx.array(i)));
-                    ifExpression.setArrayBodies(arrayBodyList);
-                }
-            }
-          if (!ctx.parameters().isEmpty()) {
-                parametersList = visitParameters(ctx.parameters());
-                ifExpression.setParametersList(parametersList);
-            }
-
-            if (ctx.property().isEmpty()) {
-                property = visitProperty(ctx.property());
-                ifExpression.setProperty(property);
-            }
-
         }
+
+        if (ctx.property() != null) {
+            property = visitProperty(ctx.property());
+            ifExpression.setProperty(property);
+        }
+
         return ifExpression;
 
     }
 
-    @Override
-    public ModelExpression visitModelExpression(HTMLParser.ModelExpressionContext ctx) {
-        System.out.println("visit ModelExpression");
-        String variable;
-        List<ArrayBody> arrayBodyList = new ArrayList<>();
-        ModelExpression modelExpression = new ModelExpression();
-
-        if (!ctx.variable().isEmpty()) {
-            variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("Variable : " + variable + "\n");
-            modelExpression.setVariable(variable);
-        }
-
-        if(!ctx.array().isEmpty()){
-          for (int i = 0; i < ctx.array().size(); i++) {
-                arrayBodyList.add(visitArray(ctx.array(i)));
-                modelExpression.setArrayBodies(arrayBodyList);
-            }
-        }
-
-        return modelExpression;
-    }
 
     @Override
     public AnnotationExpression visitAnnotationExpression(HTMLParser.AnnotationExpressionContext ctx) {
         System.out.println("visit AnnotationExpression");
 
+        String variable;
         FunctionCall functionCall = new FunctionCall();
+        ObjArray objArray = new ObjArray();
         AnnotationExpression annotationExpression = new AnnotationExpression();
+
+        if (!ctx.variable().isEmpty()) {
+            variable = ctx.variable().variableName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("Variable : " + variable);
+            annotationExpression.setVariableName(variable);
+        }
 
         if (!ctx.functionCall().isEmpty()) {
             functionCall = visitFunctionCall(ctx.functionCall());
             annotationExpression.setFunctionCall(functionCall);
         }
 
+        if (!ctx.objArray().isEmpty()) {
+            objArray = visitObjArray(ctx.objArray());
+            annotationExpression.setObjArray(objArray);
+        }
+
         return annotationExpression;
+    }
+
+    @Override
+    public ObjArray visitObjArray(HTMLParser.ObjArrayContext ctx) {
+        String arrayName;
+        List<ArrayBody> arrayBodyList = new ArrayList<>();
+        FunctionParametersList functionParametersList = new FunctionParametersList();
+        Property property = new Property();
+        ObjArray objArray = new ObjArray();
+
+        if (!ctx.arrName().isEmpty()) {
+            arrayName = ctx.arrName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
+            System.out.println("Array Name : " + arrayName);
+            objArray.setArrayName(arrayName);
+        }
+
+        if (!ctx.array().isEmpty()) {
+            for (int i = 0; i < ctx.array().size(); i++) {
+                arrayBodyList.add(visitArray(ctx.array(i)));
+                objArray.setArrayBodyList(arrayBodyList);
+            }
+        }
+
+        if (!ctx.parameters().isEmpty()) {
+            functionParametersList = visitParameters(ctx.parameters());
+            objArray.setFunctionParametersList(functionParametersList);
+        }
+
+        if (!ctx.property().isEmpty()) {
+            property = visitProperty(ctx.property());
+            objArray.setProperty(property);
+        }
+        return objArray;
     }
 
     @Override
@@ -679,34 +693,14 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
     public Property visitProperty(HTMLParser.PropertyContext ctx) {
         System.out.println("visit property");
         String variable;
-        String functionName;
-        List<ArrayBody> arrayBodyList = new ArrayList<>();
-        FunctionParametersList functionParametersList = new FunctionParametersList();
         Property property = new Property();
 
         if (ctx.CP_CONTENT_IDENTIFIER() != null) {
             variable = ctx.CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("ID : " + variable);
+            System.out.println("property : " + variable);
             property.setVariable(variable);
         }
 
-        if (ctx.functionName() != null) {
-            functionName = ctx.functionName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
-            System.out.println("functionName : " + functionName);
-            property.setFunctionName(functionName);
-
-            if(!ctx.array().isEmpty()){
-                for (int i = 0; i < ctx.array().size(); i++) {
-                    arrayBodyList.add(visitArray(ctx.array(i)));
-                    property.setArrayBodies(arrayBodyList);
-                }
-            }
-
-            if (!ctx.parameters().isEmpty()) {
-                functionParametersList = visitParameters(ctx.parameters());
-                property.setFunctionParametersList(functionParametersList);
-            }
-        }
         return property;
     }
 
@@ -803,12 +797,12 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             comparisonExpression.setRightVar(rightVariable);
         }
 
-        if (!ctx.value().isEmpty()) {
+        if (ctx.value() != null) {
             value = visitValue(ctx.value());
             comparisonExpression.setLiteralValue(value);
         }
 
-        if (!ctx.objName().isEmpty()) {
+        if (ctx.objName() != null) {
             objName = ctx.objName().CP_CONTENT_IDENTIFIER().getSymbol().getText();
             System.out.println("object name : " + objName);
             comparisonExpression.setObjName(objName);

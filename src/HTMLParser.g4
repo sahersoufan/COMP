@@ -34,14 +34,14 @@ htmlContent
 
 htmlAttribute
     : CP_SWITCH_DEF
-    | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE appExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE ashmExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_FOR CP_EQUALS CP_OPEN_DOUBLE_QUOTE forExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    | CP_SHOW CP_EQUALS CP_OPEN_DOUBLE_QUOTE showHideExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    | CP_HIDE CP_EQUALS CP_OPEN_DOUBLE_QUOTE showHideExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_SHOW CP_EQUALS CP_OPEN_DOUBLE_QUOTE ashmExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_HIDE CP_EQUALS CP_OPEN_DOUBLE_QUOTE ashmExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_SWITCH CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_SWITCH_CASE CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchCaseExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_IF CP_EQUALS CP_OPEN_DOUBLE_QUOTE ifExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    | CP_MODEL CP_EQUALS CP_OPEN_DOUBLE_QUOTE modelExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_MODEL CP_EQUALS CP_OPEN_DOUBLE_QUOTE ashmExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_CLICK CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_MOUSEOVER CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | TAG_NAME (TAG_EQUALS ATTVALUE_VALUE)?
@@ -70,8 +70,8 @@ mustacheExpression
     ;
 
 
-
-appExpression
+//app show hide model -> ashm
+ashmExpression
     : variable
     | value
     | objArray
@@ -82,14 +82,6 @@ appExpression
 forExpression
     : variable ( IN   (variable | array | objArray ) (CP_CONTENT_SEMI_COLON variable CP_CONTENT_EQUALS INDEX)? )?
     | variable CP_CONTENT_COMMA variable IN (objName | objBody)
-    ;
-
-showHideExpression
-    : value
-    | variable
-    | objArray
-    | objName CP_CONTENT_DOT property
-    | functionCall
     ;
 
 switchExpression
@@ -110,14 +102,6 @@ ifExpression
     | variable
     | functionCall
     | objArray
-    | objName CP_CONTENT_DOT property
-    ;
-
-modelExpression
-    : variable
-    | value
-    | objArray
-    | functionCall
     | objName CP_CONTENT_DOT property
     ;
 
@@ -151,6 +135,7 @@ objArray
 arrName
     : CP_CONTENT_IDENTIFIER
     ;
+
 property
     : CP_CONTENT_IDENTIFIER
     ;

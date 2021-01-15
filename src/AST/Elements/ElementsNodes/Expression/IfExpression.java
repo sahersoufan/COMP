@@ -11,8 +11,9 @@ public class IfExpression {
     private BooleanExpression booleanExpression = new BooleanExpression();
     private String variableName;
     private FunctionCall functionCall = new FunctionCall();
-    private objWithProperty OWP;
-    private objArray OA;
+    private ObjArray objArray = new ObjArray();
+    private String objName;
+    private Property property = new Property();
 
     public ComparisonExpression getComparisonExpression() {
         return comparisonExpression;
@@ -46,19 +47,27 @@ public class IfExpression {
         this.functionCall = functionCall;
     }
 
-    public objWithProperty getOWP() {
-        return OWP;
+    public ObjArray getObjArray() {
+        return objArray;
     }
 
-    public void setOWP(objWithProperty OWP) {
-        this.OWP = OWP;
+    public void setObjArray(ObjArray objArray) {
+        this.objArray = objArray;
     }
 
-    public objArray getOA() {
-        return OA;
+    public String getObjName() {
+        return objName;
     }
 
-    public void setOA(objArray OA) {
-        this.OA = OA;
+    public void setObjName(String objName) {
+        this.objName = objName;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 }
