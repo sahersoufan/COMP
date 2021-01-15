@@ -470,11 +470,6 @@ CP_CONTENT_NUMBER
     : NUMBER
     ;
 
-CP_CONTENT_STRING
-    : '"' ~[<"]* '"'
-    | '\'' ~[<']* '\''
-    ;
-
 CP_CONTENT_GREATER_THAN
     : GREATER_THAN
     ;
