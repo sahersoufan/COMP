@@ -127,6 +127,7 @@ public class BaseVisitor extends HTMLParserBaseVisitor {
             if (!ctx.TAG_NAME().isEmpty()) {
                 openTagName = ctx.TAG_NAME(0).getSymbol().getText();
                 System.out.println("OPEN TagName : " + openTagName + "\t");
+                //if(ctx.TAG_NAME(1) != null){
                 closeTagName = ctx.TAG_NAME(1).getSymbol().getText();
                 System.out.println("CLOSE TagName : " + closeTagName);
             }

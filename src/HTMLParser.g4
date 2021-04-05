@@ -183,12 +183,13 @@ parameterName
     ;
 
 comparisonExpression
-    : variable comparisonOperator (value | variable)
+    : (variable | value) comparisonOperator (value | variable)
     | objName CP_CONTENT_DOT property comparisonOperator (value | variable)
     ;
 
+//TODO check this
 booleanExpression
-    : variable? booleanOperator (value | variable)
+    : booleanOperator? variable booleanOperator (value | booleanOperator? variable)
     | objName CP_CONTENT_DOT property booleanOperator (value | variable)
     ;
 
