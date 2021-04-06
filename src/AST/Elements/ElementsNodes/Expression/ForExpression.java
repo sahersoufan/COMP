@@ -29,9 +29,7 @@ public class ForExpression {
         this.rightVariable = rightVariable;
     }
 
-    public String getIterator() {
-        return iterator;
-    }
+    public String getIterator() { return iterator; }
 
     public void setIterator(String iterator) {
         this.iterator = iterator;
