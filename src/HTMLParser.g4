@@ -1,7 +1,7 @@
 
 parser grammar HTMLParser;
 
-options { tokenVocab=HTMLLexer; }
+options { tokenVocab=LexerHtml; }
 
 htmlDocument
     : scriptletOrSeaWs* XML? scriptletOrSeaWs* DTD? scriptletOrSeaWs* htmlElements*
@@ -35,7 +35,7 @@ htmlContent
 htmlAttribute
     : CP_SWITCH_DEF
     //TODO everything for APP
-    | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE ashmExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE appExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     ///TODO everything without boolean (true, false ..)
     | CP_FOR CP_EQUALS CP_OPEN_DOUBLE_QUOTE forExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     //TODO every boolean just boolean
@@ -54,6 +54,8 @@ htmlAttribute
     | TAG_NAME (TAG_EQUALS ATTVALUE_VALUE)?
     ;
                                  /* ************************************ */
+
+
 
 htmlChardata
     : HTML_TEXT
@@ -77,31 +79,22 @@ mustacheExpression
     ;
 
 
-// TODO
-//app show hide model -> ashm
-ashmExpression
-    : variable
-    | value
-    | objArray
-    | functionCall
-    //TODO pr
-    // operty
-    | objName CP_CONTENT_DOT property
-    | (NOT)?Collection ( AND (NOT)? Collection| OR (NOT)? Collection)*
-
+appExpression
+    : collection4everything
+    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
     ;
 
 
 forExpression
     : variable ( IN   (variable | array | objArray ) (CP_CONTENT_SEMI_COLON variable CP_CONTENT_EQUALS INDEX)? )?
-    | variable CP_CONTENT_COMMA variable IN (objName | objBody)
+    | variable CP_CONTENT_COMMA variable IN (obj | objBody)
     ;
 
 switchExpression
     : value
     | variable
     | objArray
-    | objName CP_CONTENT_DOT property
+    | obj CP_CONTENT_DOT property
     ;
 
 switchCaseExpression
@@ -115,7 +108,7 @@ ifExpression
     | variable
     | functionCall
     | objArray
-    | objName CP_CONTENT_DOT property
+    | obj CP_CONTENT_DOT property
     ;
 
 annotationExpression
@@ -142,54 +135,61 @@ variableName
     ;
 //
 
+
 // ARRAY
 objArray
-    : arrName (array)+ (CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)? (CP_CONTENT_DOT property)?
+    : arrName arrayCalling
     ;
-
 arrName
     : CP_CONTENT_IDENTIFIER
     ;
 array
-    : CP_CONTENT_OPEN_BRACKETS value (CP_CONTENT_COMMA value)* CP_CONTENT_CLOSE_BRACKETS
-    | CP_CONTENT_OPEN_BRACKETS CP_CONTENT_CLOSE_BRACKETS
+    : CP_CONTENT_OPEN_BRACKETS (collection4everything (CP_CONTENT_COMMA value)*)* CP_CONTENT_CLOSE_BRACKETS
+    ;
+arrayCalling
+    : (CP_CONTENT_OPEN_BRACKETS CP_CONTENT_NUMBER CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | (property)?)?
     ;
 //
 
 
 // OBJECT
-objName
+obj
     : CP_CONTENT_IDENTIFIER
+    ;
+subObj
+    : CP_CONTENT_IDENTIFIER property
     ;
 objBody
     : CP_CONTENT_OPEN_CURLY_BRACKETS (pair (CP_CONTENT_COMMA pair)*)* CP_CONTENT_CLOSE_CURLY_BRACKETS
+    |
     ;
 pair
-// TODO collection
-    : key CP_CONTENT_COLON value
+    : key CP_CONTENT_COLON collection4everything
     ;
 key
     : CP_CONTENT_IDENTIFIER
     ;
 //
 
+
 //PROPERTY
 property
-: CP_CONTENT_DOT propertyValue
+: (CP_CONTENT_DOT propertyValue)+ (arrayCalling | functionCallFromVar)?
 ;
 
 propertyValue
-    : CP_CONTENT_IDENTIFIER (property)?
+    : CP_CONTENT_IDENTIFIER
     ;
 //
 
 
 //FUNCTION
-//TODO function need more than this
 functionCall
-    : functionName CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR
+    : functionName functionCallFromVar
     ;
-
+functionCallFromVar
+    : (CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)+ (arrayCalling | property)?
+    ;
 functionName
     : CP_CONTENT_IDENTIFIER
     ;
@@ -199,7 +199,7 @@ parameters
     ;
 
 parameter
-    : (NOT)? Collection ( AND (NOT)? Collection| OR (NOT)? Collection)*
+    : collection4everything
     ;
 //
 
@@ -207,13 +207,11 @@ parameter
 
 comparisonExpression
     : (variable | value) comparisonOperator (value | variable)
-    | objName CP_CONTENT_DOT property comparisonOperator (value | variable)
     ;
 
 //TODO check this
 booleanExpression
     : booleanOperator? variable booleanOperator (value | booleanOperator? variable)
-    | objName CP_CONTENT_DOT property booleanOperator (value | variable)
     ;
 
 comparisonOperator
@@ -238,6 +236,21 @@ oneLineCondition
     ;
 
 
+collection4everything
+        : variable
+        | value
+        | array
+        | objArray
+        | functionCall
+        | subObj
+    ;
+collection4boolRet
+        : variable
+        | value4bool
+        | objArray
+        | functionCall
+        | subObj
+    ;
 
 
 
@@ -312,11 +325,14 @@ formatType
 value
     : CP_CONTENT_STRING
     | CP_CONTENT_NUMBER
-    | objBody
-    | array
     | CP_CONTENT_TRUE
     | CP_CONTENT_FALSE
     | CP_CONTENT_NULL
+    ;
+value4bool
+    : CP_CONTENT_NUMBER
+    | CP_CONTENT_TRUE
+    | CP_CONTENT_FALSE
     ;
 ///////////////////
 
@@ -327,7 +343,7 @@ collection
         | array
         | objArray
         | functionCall
-        | objName (CP_CONTENT_DOT property)+
+        | obj (CP_CONTENT_DOT property)+
     ;
 
 //*****************************************************************************************************************
