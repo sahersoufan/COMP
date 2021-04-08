@@ -81,8 +81,28 @@ mustacheExpression
 // APP
 appExpression
     : collection4everything
-    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    | (CP_CONTENT_NOT)? collection4App2 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4App2 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4App2)*
     ;
+collection4App1
+        : variable
+        | value
+        | array
+        | objArray
+        | functionCall
+        | subObj
+        | oneLineBoolCondition
+    ;
+collection4App2
+        : variable
+        | CP_CONTENT_TRUE
+        | CP_CONTENT_FALSE
+        | objArray
+        | functionCall
+        | subObj
+        | comparisonExpression
+        | oneLineBoolCondition
+    ;
+
 //
 
 
@@ -90,37 +110,67 @@ appExpression
 forExpression
     : collection4For1 ( IN   collection4For2 (CP_CONTENT_SEMI_COLON collection4For1 CP_CONTENT_EQUALS INDEX)? )?
     | collection4For1 CP_CONTENT_COMMA collection4For1 IN collection4For3
-    |collection4For4
-    //TODO add logic && || NOT
+    | collection4For5
+    | (CP_CONTENT_NOT)? collection4For4 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4For4 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4For4)*
     ;
 
-    collection4For1
+collection4For1
     :variable
     |subObj
     |objArray
     ;
-    collection4For2
+collection4For2
     : variable
-    | value4NBoolNNull
+    | CP_CONTENT_STRING
+    | CP_CONTENT_NUMBER
     | subObj
     |objArray
     |array
-    |oneLineOneOfTheAbove
+    |oneLine4For2Condition
     ;
-    collection4For3
+oneLine4For2Condition
+: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+(variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING) CP_CONTENT_SEMI_COLON
+(variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING)
+;
+collection4For3
     :obj
     |objBody
     |subObj
     |objArray
     |functionCall
-    |oneLineOAF
+    |oneLine4For3Condition
     ;
-    collection4For4
-    :variable
-    |valueNstringNNull
-    |subObj
-    |objArray
-    |onLineOneOfTheAbove
+
+oneLine4For3Condition
+: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+(obj | objBody | subObj | objArray | functionCall) CP_CONTENT_SEMI_COLON
+(obj | objBody | subObj | objArray | functionCall)
+;
+
+
+
+
+collection4For4
+    : variable
+    | CP_CONTENT_TRUE
+    | CP_CONTENT_FALSE
+    | objArray
+    | functionCall
+    | subObj
+    | comparisonExpression
+    | oneLineBoolCondition
+    ;
+collection4For5
+    : variable
+    | CP_CONTENT_NUMBER
+    | CP_CONTENT_TRUE
+    | CP_CONTENT_FALSE
+    | objArray
+    | functionCall
+    | subObj
+    | comparisonExpression
+    | oneLineBoolCondition
     ;
 //
 
@@ -128,8 +178,17 @@ forExpression
 //SHOW
 //HIDE
 showHideExpression
-    : collection4boolRet
-    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    : (CP_CONTENT_NOT)? collection4ShowHide1 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4ShowHide1 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4ShowHide1)*
+    ;
+collection4ShowHide1
+        : variable
+        | CP_CONTENT_TRUE
+        | CP_CONTENT_FALSE
+        | objArray
+        | functionCall
+        | subObj
+        | comparisonExpression
+        | oneLineBoolCondition
     ;
 //
 
@@ -145,12 +204,19 @@ switchCaseExpression
 
 collection4Switch1
     :variable
-    |valueNBoolNNull
+    | CP_CONTENT_STRING
+    | CP_CONTENT_NUMBER
     |objArray
     |subObj
-    |oneLineOfTheAbove
+    |oneLine4switch1
     ;
+oneLine4switch1
+: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj) CP_CONTENT_SEMI_COLON
+  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj)
+;
 //
+
 
 // IF
 ifExpression
@@ -159,7 +225,8 @@ ifExpression
 
 collection4If
     : variable
-    | value4bool
+    | CP_CONTETNT_TRUE
+    | CP_CONTENT_FALSE
     | objArray
     | functionCall
     | subObj
@@ -171,8 +238,27 @@ collection4If
 
 // MODEL
 modelExpression
-    : collection4everything
-    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    : collection4Model1
+    | (CP_CONTENT_NOT)? collection4Model2 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4Model2 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4Model2)*
+    ;
+collection4Model1
+        : variable
+        | value
+        | array
+        | objArray
+        | functionCall
+        | subObj
+        | oneLineBoolCondition
+    ;
+collection4Model2
+        : variable
+        | CP_CONTENT_TRUE
+        | CP_CONTENT_FALSE
+        | objArray
+        | functionCall
+        | subObj
+        | comparisonExpression
+        | oneLineBoolCondition
     ;
 //
 
@@ -185,11 +271,31 @@ collection4Annotation
     :functionCall
     |objArray
     |subObj
-    |oneLine4Function //TODO check if this exist
+    |oneLine4Annotation
     ;
+oneLine4Annotation
+: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_COLON
+  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine)
+;
+functionCall4AnnotOneLine
+    : funcEndRet4AnnotOneLine (arrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)?
+    ;
+bridgeFAP4AnnotOneLine
+    : (ArrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)
+    ;
+arrayFuncRet4AnnotOneLine
+    : (CP_CONTENT_OPEN_BRACKETS CP_CONTENT_NUMBER CP_CONTENT_CLOSE_BRACKETS)+
+    funcEndRet4AnnotOneLine bridgeFAP4AnnotOneLine?
+;
+propFuncRet4AnnotOneLine
+    : (CP_CONTENT_DOT propertyValue)+
+    funcEndRet4AnnotOneLine bridgeFAP4AnnotOneLine?
+    ;
+funcEndRet4AnnotOneLine
+:(CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)+
+;
 //
-
-
 
 
 
@@ -282,11 +388,16 @@ comparisonExpression
     : collection4comparison comparisonOperator collection4comparison
     ;
 oneLineCondition
-    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_SEMI_COLON collection4everything
+    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_COLON collection4everything
     ;
 oneLineBoolCondition
-    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_SEMI_COLON CP_CONTENT_FALSE
+    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE
     ;
+
+
+
+
+
 comparisonOperator
     : CP_CONTENT_GREATER_THAN
     | CP_CONTENT_GREATER_EQ
@@ -295,6 +406,22 @@ comparisonOperator
     | CP_CONTENT_EQUAL_TO
     | CP_CONTENT_NOT_EQUAL
     ;
+collection4comparison
+         : variable
+         | value
+         | objArray
+         | functionCall
+         | subObj
+;
+collection4oneLineCondition
+         : variable
+         | value4bool
+         | objArray
+         | functionCall
+         | subObj
+         | comparisonExpression
+    ;
+
 //
 
 
@@ -306,8 +433,7 @@ value
     | CP_CONTENT_NULL
     ;
 value4bool
-    : CP_CONTENT_NUMBER
-    | CP_CONTENT_TRUE
+    : CP_CONTENT_TRUE
     | CP_CONTENT_FALSE
     ;
 
@@ -329,21 +455,8 @@ collection4boolRet
         | comparisonExpression
         | oneLineBoolCondition
     ;
-collection4comparison
-         : variable
-         | value
-         | objArray
-         | functionCall
-         | subObj
-;
-collection4oneLineCondition
-         : variable
-         | value4bool
-         | objArray
-         | functionCall
-         | subObj
-         | comparisonExpression
-    ;
+
+
 
 
 
