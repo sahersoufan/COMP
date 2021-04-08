@@ -34,23 +34,23 @@ htmlContent
 
 htmlAttribute
     : CP_SWITCH_DEF
-    //TODO everything for APP
     | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE appExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    ///TODO everything without boolean (true, false ..)
+
     | CP_FOR CP_EQUALS CP_OPEN_DOUBLE_QUOTE forExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    //TODO every boolean just boolean
-    | CP_SHOW CP_EQUALS CP_OPEN_DOUBLE_QUOTE  CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    | CP_HIDE CP_EQUALS CP_OPEN_DOUBLE_QUOTE  CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    //TODO just one symbol without array or objBody or function
+
+    | CP_SHOW CP_EQUALS CP_OPEN_DOUBLE_QUOTE showHideExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_HIDE CP_EQUALS CP_OPEN_DOUBLE_QUOTE showHideExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+
     | CP_SWITCH CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_SWITCH_CASE CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchCaseExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    //TODO everuthing without arraybody or objbody
+
     | CP_IF CP_EQUALS CP_OPEN_DOUBLE_QUOTE ifExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    //TODO everything for MODEL
-    | CP_MODEL CP_EQUALS CP_OPEN_DOUBLE_QUOTE  CP_CONTENT_CLOSE_DOUBLE_QUOTE
-    //TODO function or arrFunction or objFunction
+
+    | CP_MODEL CP_EQUALS CP_OPEN_DOUBLE_QUOTE modelExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+
     | CP_CLICK CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_MOUSEOVER CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    //
     | TAG_NAME (TAG_EQUALS ATTVALUE_VALUE)?
     ;
                                  /* ************************************ */
@@ -78,39 +78,117 @@ mustacheExpression
     | OPEN_MUSTACHE filter CLOSE_MUSTACHE
     ;
 
-
+// APP
 appExpression
     : collection4everything
     | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
     ;
+//
 
 
+// FOR
 forExpression
-    : variable ( IN   (variable | array | objArray ) (CP_CONTENT_SEMI_COLON variable CP_CONTENT_EQUALS INDEX)? )?
-    | variable CP_CONTENT_COMMA variable IN (obj | objBody)
+    : collection4For1 ( IN   collection4For2 (CP_CONTENT_SEMI_COLON collection4For1 CP_CONTENT_EQUALS INDEX)? )?
+    | collection4For1 CP_CONTENT_COMMA collection4For1 IN collection4For3
+    |collection4For4
+    //TODO add logic && || NOT
     ;
 
+    collection4For1
+    :variable
+    |subObj
+    |objArray
+    ;
+    collection4For2
+    : variable
+    | value4NBoolNNull
+    | subObj
+    |objArray
+    |array
+    |oneLineOneOfTheAbove
+    ;
+    collection4For3
+    :obj
+    |objBody
+    |subObj
+    |objArray
+    |functionCall
+    |oneLineOAF
+    ;
+    collection4For4
+    :variable
+    |valueNstringNNull
+    |subObj
+    |objArray
+    |onLineOneOfTheAbove
+    ;
+//
+
+
+//SHOW
+//HIDE
+showHideExpression
+    : collection4boolRet
+    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    ;
+//
+
+
+// SWITCH
 switchExpression
-    : value
-    | variable
-    | objArray
-    | obj CP_CONTENT_DOT property
+    : collection4Switch1
     ;
 
 switchCaseExpression
-    : CP_CONTENT_STRING
-    | CP_CONTENT_NUMBER
+    : collection4Switch1
     ;
 
+collection4Switch1
+    :variable
+    |valueNBoolNNull
+    |objArray
+    |subObj
+    |oneLineOfTheAbove
+    ;
+//
+
+// IF
 ifExpression
-    : (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    : (CP_CONTENT_NOT)? collection4If ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4If | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4If)*
     ;
 
-annotationExpression
-    : functionCall
+collection4If
+    : variable
+    | value4bool
     | objArray
-    | variable
+    | functionCall
+    | subObj
+    | comparisonExpression
+    | oneLineBoolCondition
     ;
+//
+
+
+// MODEL
+modelExpression
+    : collection4everything
+    | (CP_CONTENT_NOT)? collection4boolRet ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4boolRet | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4boolRet)*
+    ;
+//
+
+
+// ANNOTATION
+annotationExpression
+    : collection4Annotation
+    ;
+collection4Annotation
+    :functionCall
+    |objArray
+    |subObj
+    |oneLine4Function //TODO check if this exist
+    ;
+//
+
 
 
 
@@ -266,6 +344,10 @@ collection4oneLineCondition
          | subObj
          | comparisonExpression
     ;
+
+
+
+
 
 
 //TODO everything in MUSTACHE
