@@ -72,11 +72,7 @@ htmlComment
     | HTML_CONDITIONAL_COMMENT
     ;
 
-mustacheExpression
-    : OPEN_MUSTACHE mustacheVariable CLOSE_MUSTACHE
-    | OPEN_MUSTACHE mustacheOneLineCondition CLOSE_MUSTACHE
-    | OPEN_MUSTACHE filter CLOSE_MUSTACHE
-    ;
+
 
 // APP
 appExpression
@@ -129,7 +125,9 @@ collection4For2
     |oneLine4For2Condition
     ;
 oneLine4For2Condition
-: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+CP_CONTENT_QUESTION_MARK
 (variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING) CP_CONTENT_SEMI_COLON
 (variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING)
 ;
@@ -143,7 +141,9 @@ collection4For3
     ;
 
 oneLine4For3Condition
-: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+CP_CONTENT_QUESTION_MARK
 (obj | objBody | subObj | objArray | functionCall) CP_CONTENT_SEMI_COLON
 (obj | objBody | subObj | objArray | functionCall)
 ;
@@ -211,7 +211,9 @@ collection4Switch1
     |oneLine4switch1
     ;
 oneLine4switch1
-: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+CP_CONTENT_QUESTION_MARK
   (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj) CP_CONTENT_SEMI_COLON
   (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj)
 ;
@@ -274,7 +276,9 @@ collection4Annotation
     |oneLine4Annotation
     ;
 oneLine4Annotation
-: collection4oneLineCondition CP_CONTENT_QUESTION_MARK
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+CP_CONTENT_QUESTION_MARK
   (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_COLON
   (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine)
 ;
@@ -322,12 +326,13 @@ objArray
 arrName
     : CP_CONTENT_IDENTIFIER
     ;
-array
-    : CP_CONTENT_OPEN_BRACKETS (collection4everything (CP_CONTENT_COMMA value)*)* CP_CONTENT_CLOSE_BRACKETS
-    ;
 arrayCalling
     : (CP_CONTENT_OPEN_BRACKETS CP_CONTENT_NUMBER CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | (property)?)?
     ;
+array
+    : CP_CONTENT_OPEN_BRACKETS (collection4everything (CP_CONTENT_COMMA value)*)* CP_CONTENT_CLOSE_BRACKETS
+    ;
+
 //
 
 
@@ -388,16 +393,15 @@ comparisonExpression
     : collection4comparison comparisonOperator collection4comparison
     ;
 oneLineCondition
-    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_COLON collection4everything
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+    CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_COLON collection4everything
     ;
 oneLineBoolCondition
-    : collection4oneLineCondition CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE
+: (CP_CONTENT_NOT)? collection4oneLineCondition
+( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
+    CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE
     ;
-
-
-
-
-
 comparisonOperator
     : CP_CONTENT_GREATER_THAN
     | CP_CONTENT_GREATER_EQ
@@ -412,10 +416,12 @@ collection4comparison
          | objArray
          | functionCall
          | subObj
+         | oneLineCondition
 ;
 collection4oneLineCondition
          : variable
-         | value4bool
+         | CP_CONTENT_TRUE
+         | CP_CONTENT_FALSE
          | objArray
          | functionCall
          | subObj
@@ -432,10 +438,6 @@ value
     | CP_CONTENT_FALSE
     | CP_CONTENT_NULL
     ;
-value4bool
-    : CP_CONTENT_TRUE
-    | CP_CONTENT_FALSE
-    ;
 
 collection4everything
         : variable
@@ -448,7 +450,8 @@ collection4everything
     ;
 collection4boolRet
         : variable
-        | value4bool
+        | CP_CONTENT_TRUE
+        | CP_CONTENT_FALSE
         | objArray
         | functionCall
         | subObj
@@ -457,23 +460,117 @@ collection4boolRet
     ;
 
 
+ ///////////////////////// MUSTACHE /////////////////////////
 
-
-
-
-
-
-//TODO everything in MUSTACHE
-mustacheOneLineCondition
-    :  mustacheComparisonExpression MUSTACHE_QUESTION_MARK ifTrue MUSTACHE_COLON ifFalse
+mustacheExpression
+    : OPEN_MUSTACHE collection4Mustache CLOSE_MUSTACHE
+    | OPEN_MUSTACHE filter CLOSE_MUSTACHE
     ;
 
-mustacheComparisonExpression
-    : mustacheVariable (mustacheComparisonOperator mustacheValue)?
+collection4Mustache
+    : mustacheVariable
+    | mustacheValue
+    | objArray4Must
+    | functionCall4Must
+    | subObj4Must
+    | oneLineCondition4Must
     ;
 
+collection4OLCMust
+    : mustacheVariable
+    | MUSTACHE_TRUE
+    | MUSTACHE_FALSE
+    | objArray4Must
+    | functionCall4Must
+    | subObj4Must
+    | comparisonExp4Must
+    ;
+collection4CompMust
+    : mustacheVariable
+    | MUSTACHE_NUMBER
+    | MUSTACHE_STRING
+    | objArray4Must
+    | functionCall4Must
+    | subObj4Must
+    | oneLineCondition4Must
+    ;
+
+// VAR
 mustacheVariable
     : MUSTACHE_IDENTIFIER
+    ;
+//
+
+
+// VALUE
+mustacheValue
+    : MUSTACHE_NUMBER
+    | MUSTACHE_STRING
+    | MUSTACHE_NULL
+    | MUSTACHE_FALSE
+    | MUSTACHE_TRUE
+    ;
+//
+
+
+// ARRAY
+objArray4Must
+    : arrName4Must arrayCalling4Must
+    ;
+arrName4Must
+    : MUSTACHE_IDENTIFIER
+    ;
+arrayCalling4Must
+    : (MUSTACHE_OPEN_BRACKETS MUSTACHE_NUMBER MUSTACHE_CLOSE_BRACKETS)+ (functionCallFromVar4Must | property4Must)?
+    ;
+//
+
+
+// FUNCTION
+functionCall4Must
+    : functionName4Must functionCallFromVar4Must
+    ;
+functionCallFromVar4Must
+    : (MUSTACHE_OPEN_PAR parameters4Must? MUSTACHE_CLOSE_PAR)+ (arrayCalling4Must | property4Must)?
+    ;
+functionName4Must
+    : MUSTACHE_IDENTIFIER
+    ;
+
+parameters4Must
+    : parameter4Must (MUSTACHE_COMMA parameter4Must)*
+    ;
+
+parameter4Must
+    : collection4Mustache
+    ;
+//
+
+// OBJECT
+subObj4Must
+    : CP_CONTENT_IDENTIFIER property
+    ;
+//
+
+
+//PROPERTY
+property4Must
+: (MUSTACHE_DOT propertyValue4Must)+ (arrayCalling4Must | functionCallFromVar4Must)?
+;
+
+propertyValue4Must
+    : MUSTACHE_IDENTIFIER
+    ;
+//
+
+// COMPARISON
+oneLineCondition4Must
+    : (CP_CONTENT_NOT)? collection4OLCMust
+    ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4OLCMust | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4OLCMust)*
+    MUSTACHE_QUESTION_MARK collection4Mustache MUSTACHE_COLON collection4Mustache
+    ;
+comparisonExp4Must
+    : collection4CompMust mustacheComparisonOperator collection4CompMust
     ;
 
 mustacheComparisonOperator
@@ -484,41 +581,12 @@ mustacheComparisonOperator
     | MUSTACHE_EQUAL_TO
     | MUSTACHE_NOT_EQUAL
     ;
-
-mustacheValue
-    : MUSTACHE_TRUE
-    | MUSTACHE_FALSE
-    | MUSTACHE_NULL
-    | MUSTACHE_STRING
-    | MUSTACHE_NUMBER
-    ;
+//
 
 
-
-
-ifTrue
-    : MUSTACHE_TRUE
-    | MUSTACHE_FALSE
-    | MUSTACHE_NULL
-    | MUSTACHE_STRING
-    | MUSTACHE_NUMBER
-    ;
-
-ifFalse
-    : MUSTACHE_TRUE
-    | MUSTACHE_FALSE
-    | MUSTACHE_NULL
-    | MUSTACHE_STRING
-    | MUSTACHE_NUMBER
-    ;
-
-
-
-
-
-
+// FILTER
 filter
-    : modelName MUSTACHE_FILTER formatName (MUSTACHE_COLON formatType)?
+    : modelName MUSTACHE_FILTER formatName (MUSTACHE_COLON collection4Mustache)?
     ;
 
 modelName
@@ -528,11 +596,7 @@ modelName
 formatName
     : MUSTACHE_IDENTIFIER
     ;
-
-formatType
-    : MUSTACHE_STRING
-    ;
-
+//
 
 
 //*****************************************************************************************************************

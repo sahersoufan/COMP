@@ -45,6 +45,7 @@ TAG_OPEN
     : '<' -> pushMode(TAG)
     ;
 
+//TODO check this
 HTML_TEXT
     : ~('<' | '{')+
     ;
@@ -574,60 +575,60 @@ MUSTACHE_WS
     : (' '|'\t'|'\r'? '\n')+ -> channel(HIDDEN)
     ;
 
-//MUSTACHE_SEMI_COLON
-//    : ';'
-//    ;
-//
+MUSTACHE_SEMI_COLON
+    : ';'
+    ;
 
-//MUSTACHE_COMMA
-//    : ','
-//    ;
-//
-//MUSTACHE_OPEN_PAR
-//    : '('
-//    ;
-//
-//MUSTACHE_CLOSE_PAR
-//    : ')'
-//    ;
-//
-//MUSTACHE_OPEN_CURLY_BRACKETS
-//    : '{'
-//    ;
-//
-//MUSTACHE_CLOSE_CURLY_BRACKETS
-//    : '}'
-//    ;
-//
-//MUSTACHE_OPEN_BRACKETS
-//    : '['
-//    ;
-//
-//MUSTACHE_CLOSE_BRACKETS
-//    : ']'
-//    ;
-//
-//MUSTACHE_DOT
-//    : '.'
-//    ;
-//
-//MUSTACHE_SINGLE_QUOTE
-//    : '\''
-//    ;
-//
 
-//MUSTACHE_OR
-//    : '||'
-//    ;
-//
-//MUSTACHE_AND
-//    : '&&'
-//    ;
-//
-//MUSTACHE_NOT
-//    : '!'
-//    ;
-//
+MUSTACHE_COMMA
+    : ','
+    ;
+
+MUSTACHE_OPEN_PAR
+    : '('
+    ;
+
+MUSTACHE_CLOSE_PAR
+    : ')'
+    ;
+
+MUSTACHE_OPEN_CURLY_BRACKETS
+    : '{'
+    ;
+
+MUSTACHE_CLOSE_CURLY_BRACKETS
+    : '}'
+    ;
+
+MUSTACHE_OPEN_BRACKETS
+    : '['
+    ;
+
+MUSTACHE_CLOSE_BRACKETS
+    : ']'
+    ;
+
+MUSTACHE_DOT
+    : '.'
+    ;
+
+MUSTACHE_SINGLE_QUOTE
+    : '\''
+    ;
+
+
+MUSTACHE_OR
+    : '||'
+    ;
+
+MUSTACHE_AND
+    : '&&'
+    ;
+
+MUSTACHE_NOT
+    : '!'
+    ;
+
 //MUSTACHE_IDENTIFIER // THIS TOKEN IS SPECIFIC TO MUSTACHE, EVEN THOUGH IT"S THE SAME AS IDENTIFIER
 //    : [a-zA-Z_] [a-zA-Z_0-9]*
 //    ;
