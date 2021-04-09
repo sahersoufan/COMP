@@ -1,4 +1,3 @@
-
 parser grammar HTMLParser;
 
 options { tokenVocab=HTMLLexer; }
@@ -47,7 +46,7 @@ htmlAttribute
     | CP_IF CP_EQUALS CP_OPEN_DOUBLE_QUOTE ifExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
 
     | CP_MODEL CP_EQUALS CP_OPEN_DOUBLE_QUOTE modelExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
-
+//TODO check after @
     | CP_CLICK CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_MOUSEOVER CP_EQUALS CP_OPEN_DOUBLE_QUOTE annotationExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     //
@@ -78,6 +77,7 @@ htmlComment
 appExpression
     : collection4everything
     | (CP_CONTENT_NOT)? collection4App2 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4App2 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4App2)*
+
     ;
 collection4App1
         : variable
@@ -98,7 +98,11 @@ collection4App2
         | comparisonExpression
         | oneLineBoolCondition
     ;
+//+-*/
 
+//collection4App3
+//    :
+//    ;
 //
 
 
@@ -118,18 +122,18 @@ collection4For1
 collection4For2
     : variable
     | CP_CONTENT_STRING
-    | CP_CONTENT_NUMBER
+    | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     | subObj
     |objArray
     |array
     |oneLine4For2Condition
     ;
 oneLine4For2Condition
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
 CP_CONTENT_QUESTION_MARK
-(variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING) CP_CONTENT_SEMI_COLON
-(variable | subObj | objArray | array | CP_CONTENT_NUMBER | CP_CONTENT_STRING)
+(variable | subObj | objArray | array | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)? | CP_CONTENT_STRING) CP_CONTENT_SEMI_COLON
+(variable | subObj | objArray | array | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)? | CP_CONTENT_STRING) CP_CONTENT_CLOSE_PAR
 ;
 collection4For3
     :obj
@@ -141,11 +145,11 @@ collection4For3
     ;
 
 oneLine4For3Condition
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
 CP_CONTENT_QUESTION_MARK
 (obj | objBody | subObj | objArray | functionCall) CP_CONTENT_SEMI_COLON
-(obj | objBody | subObj | objArray | functionCall)
+(obj | objBody | subObj | objArray | functionCall) CP_CONTENT_CLOSE_PAR
 ;
 
 
@@ -163,7 +167,7 @@ collection4For4
     ;
 collection4For5
     : variable
-    | CP_CONTENT_NUMBER
+    | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     | CP_CONTENT_TRUE
     | CP_CONTENT_FALSE
     | objArray
@@ -205,17 +209,17 @@ switchCaseExpression
 collection4Switch1
     :variable
     | CP_CONTENT_STRING
-    | CP_CONTENT_NUMBER
+    | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     |objArray
     |subObj
     |oneLine4switch1
     ;
 oneLine4switch1
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR(CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
 CP_CONTENT_QUESTION_MARK
-  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj) CP_CONTENT_SEMI_COLON
-  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER | objArray | subObj)
+  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)? | objArray | subObj) CP_CONTENT_SEMI_COLON
+  (variable | CP_CONTENT_STRING | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)? | objArray | subObj) CP_CONTENT_CLOSE_PAR
 ;
 //
 
@@ -276,11 +280,11 @@ collection4Annotation
     |oneLine4Annotation
     ;
 oneLine4Annotation
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
 CP_CONTENT_QUESTION_MARK
   (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_COLON
-  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine)
+  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_CLOSE_PAR
 ;
 functionCall4AnnotOneLine
     : funcEndRet4AnnotOneLine (arrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)?
@@ -289,7 +293,7 @@ bridgeFAP4AnnotOneLine
     : (ArrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)
     ;
 arrayFuncRet4AnnotOneLine
-    : (CP_CONTENT_OPEN_BRACKETS CP_CONTENT_NUMBER CP_CONTENT_CLOSE_BRACKETS)+
+    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC  CP_CONTENT_CLOSE_BRACKETS)+
     funcEndRet4AnnotOneLine bridgeFAP4AnnotOneLine?
 ;
 propFuncRet4AnnotOneLine
@@ -310,7 +314,7 @@ funcEndRet4AnnotOneLine
 
 // VARIABLE
 variable
-    : variableName
+    : variableName (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     ;
 
 variableName
@@ -321,13 +325,15 @@ variableName
 
 // ARRAY
 objArray
-    : arrName arrayCalling
+    : arrName arrayCalling (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     ;
 arrName
     : CP_CONTENT_IDENTIFIER
     ;
+
 arrayCalling
-    : (CP_CONTENT_OPEN_BRACKETS CP_CONTENT_NUMBER CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | (property)?)?
+    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC
+     CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | (property)?)?
     ;
 array
     : CP_CONTENT_OPEN_BRACKETS (collection4everything (CP_CONTENT_COMMA value)*)* CP_CONTENT_CLOSE_BRACKETS
@@ -341,7 +347,7 @@ obj
     : CP_CONTENT_IDENTIFIER
     ;
 subObj
-    : CP_CONTENT_IDENTIFIER property
+    : CP_CONTENT_IDENTIFIER property (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     ;
 objBody
     : CP_CONTENT_OPEN_CURLY_BRACKETS (pair (CP_CONTENT_COMMA pair)*)* CP_CONTENT_CLOSE_CURLY_BRACKETS
@@ -369,7 +375,7 @@ propertyValue
 
 //FUNCTION
 functionCall
-    : functionName functionCallFromVar
+    : functionName functionCallFromVar (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     ;
 functionCallFromVar
     : (CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)+ (arrayCalling | property)?
@@ -392,15 +398,17 @@ parameter
 comparisonExpression
     : collection4comparison comparisonOperator collection4comparison
     ;
+
 oneLineCondition
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
-    CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_COLON collection4everything
+    CP_CONTENT_QUESTION_MARK collection4everything CP_CONTENT_COLON collection4everything CP_CONTENT_CLOSE_PAR
     ;
+
 oneLineBoolCondition
-: (CP_CONTENT_NOT)? collection4oneLineCondition
+: CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
-    CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE
+    CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE CP_CONTENT_CLOSE_PAR
     ;
 comparisonOperator
     : CP_CONTENT_GREATER_THAN
@@ -433,7 +441,7 @@ collection4oneLineCondition
 
 value
     : CP_CONTENT_STRING
-    | CP_CONTENT_NUMBER
+    | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     | CP_CONTENT_TRUE
     | CP_CONTENT_FALSE
     | CP_CONTENT_NULL
@@ -447,6 +455,14 @@ collection4everything
         | functionCall
         | subObj
         | oneLineCondition
+    ;
+collection4ARITHMETIC
+    : variable
+    | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
+    | objArray
+    | functionCall
+    | subObj
+    | oneLineCondition
     ;
 collection4boolRet
         : variable
@@ -487,8 +503,17 @@ collection4OLCMust
     ;
 collection4CompMust
     : mustacheVariable
-    | MUSTACHE_NUMBER
+    | MUSTACHE_NUMBER (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     | MUSTACHE_STRING
+    | objArray4Must
+    | functionCall4Must
+    | subObj4Must
+    | oneLineCondition4Must
+    ;
+
+collection4MUSTARITHMETIC
+    : mustacheVariable
+    | MUSTACHE_NUMBER (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     | objArray4Must
     | functionCall4Must
     | subObj4Must
@@ -497,14 +522,14 @@ collection4CompMust
 
 // VAR
 mustacheVariable
-    : MUSTACHE_IDENTIFIER
+    : MUSTACHE_IDENTIFIER (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     ;
 //
 
 
 // VALUE
 mustacheValue
-    : MUSTACHE_NUMBER
+    : MUSTACHE_NUMBER (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     | MUSTACHE_STRING
     | MUSTACHE_NULL
     | MUSTACHE_FALSE
@@ -515,20 +540,21 @@ mustacheValue
 
 // ARRAY
 objArray4Must
-    : arrName4Must arrayCalling4Must
+    : arrName4Must arrayCalling4Must (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     ;
 arrName4Must
     : MUSTACHE_IDENTIFIER
     ;
 arrayCalling4Must
-    : (MUSTACHE_OPEN_BRACKETS MUSTACHE_NUMBER MUSTACHE_CLOSE_BRACKETS)+ (functionCallFromVar4Must | property4Must)?
+    : (MUSTACHE_OPEN_BRACKETS collection4MUSTARITHMETIC (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
+    MUSTACHE_CLOSE_BRACKETS)+ (functionCallFromVar4Must | property4Must)?
     ;
 //
 
 
 // FUNCTION
 functionCall4Must
-    : functionName4Must functionCallFromVar4Must
+    : functionName4Must functionCallFromVar4Must (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     ;
 functionCallFromVar4Must
     : (MUSTACHE_OPEN_PAR parameters4Must? MUSTACHE_CLOSE_PAR)+ (arrayCalling4Must | property4Must)?
@@ -548,7 +574,7 @@ parameter4Must
 
 // OBJECT
 subObj4Must
-    : CP_CONTENT_IDENTIFIER property
+    : MUSTACHE_IDENTIFIER property4Must (MUSTAHCE_ARITHMETIC collection4MUSTARITHMETIC)?
     ;
 //
 
@@ -565,9 +591,9 @@ propertyValue4Must
 
 // COMPARISON
 oneLineCondition4Must
-    : (CP_CONTENT_NOT)? collection4OLCMust
-    ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4OLCMust | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4OLCMust)*
-    MUSTACHE_QUESTION_MARK collection4Mustache MUSTACHE_COLON collection4Mustache
+    : MUSTACHE_OPEN_PAR(MUSTACHE_NOT)? collection4OLCMust
+    ( MUSTACHE_AND (MUSTACHE_NOT)? collection4OLCMust | MUSTACHE_OR (MUSTACHE_NOT)? collection4OLCMust)*
+    MUSTACHE_QUESTION_MARK collection4Mustache MUSTACHE_COLON collection4Mustache MUSTACHE_CLOSE_PAR
     ;
 comparisonExp4Must
     : collection4CompMust mustacheComparisonOperator collection4CompMust

@@ -38,8 +38,6 @@ null value
         <header>
             <div>
                 <ul class="navProvider" cp-for="x in [1,4,5];i=index">
-                //TODO -- add arithmatic logic please
-
                     <li>{{i}} : {{i + x - 3}}</li>
                 </ul>
             </div>
@@ -64,14 +62,14 @@ null value
         <header>
             <div cp-show="showItem()">
                 <ul class="navProvider unordered-list" cp-for="obj in t">
-                //TODO mustache may be an obj.something do it please
-                    <li>{{i}} : {{obj.fistName}} {{obj.lastName}}</li>
+                <li>{{i}} : {{obj.fistName}} {{obj.lastName}}</li>
                 </ul>
             </div>
         </header>
     </nav>
 </head>
 <body>
+// TODO check
   <input name="search" @change="handleChange(event)" @focus="handleFocus()" />
 </body>
 </html>
@@ -86,13 +84,10 @@ null value
 <body>
 <form>
     <p cp-for="k,v in obj">
-    //TODO show may have logic units ( condthions or something)
 	<span cp-show="v.age < 18">
-	//TODO mustache maybe string or bool value
 	{{'Young'}}
 	</span> 
 	<span cp-show="v.age > 18">
-	//TODO mustache may be anything
 	{{v.married ? "Married" : "Single"}}
 	</span> 
 	</p>
@@ -127,8 +122,8 @@ null value
 
 </head>
 <body>
-    //TODO add everthing to everything and every thing to mustache
-    <p cp-show="user && user.expert && user.expert.name"> {{'Expert name' :  + user.expert.name}} </p>
+    //TODO i don't know
+    <p cp-show="user && user.expert && user.expert.name"> {{'Expert name'}} :  {{ user.expert.name}} </p>
     <p cp-hide="!user && !user.expert && !user.expert.name"> {{'Username'}} </p>
 </body>
 </html>
@@ -141,7 +136,6 @@ null value
 
 </head>
 <body>
-//TODO add multi obj. . . . . . .
 <div cp-switch="object.user.type">
     <h1 cp-switch-case="1"> displayed </h1>
     <h2 cp-switch-case="2"> displayed </h2>
@@ -175,7 +169,6 @@ null value
 </head>
 <body>
 <div>
-    //TODO mustache need allllot of editing
     <p cp-if="result() < 30"> {{result() < 20 ? (x > 15 ? '1-1' : '1-2') : (x < 15 ? '2-1' : '2-2') }} </p>
 </div>
 </body>

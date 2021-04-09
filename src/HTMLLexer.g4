@@ -148,7 +148,8 @@ fragment DIGIT
     ;
 
 fragment STRING
-    : '"' ~[<"]* '"'
+//    : '"' ~["]* '"'
+    : '\'' ~[<']* '\''
     ;
 
 fragment TRUE
@@ -166,7 +167,9 @@ fragment NULL
 fragment IDENTIFIER
     : [a-zA-Z_] [a-zA-Z_0-9]*
     ;
-
+fragment Arithmetic
+    :[+-/*]
+    ;
 
 // tag declarations
 
@@ -204,6 +207,7 @@ mode TAG;
     : 'cp-model'->pushMode(CP)
     ;
 
+// TODO i don't thimk so
  CP_CLICK
     : '@click'->pushMode(CP)
     ;
@@ -470,6 +474,9 @@ CP_CONTENT_IDENTIFIER
 CP_CONTENT_NUMBER
     : NUMBER
     ;
+CP_CONTENT_STRING
+    : STRING
+    ;
 
 CP_CONTENT_GREATER_THAN
     : GREATER_THAN
@@ -494,7 +501,9 @@ CP_CONTENT_EQUAL_TO
 CP_CONTENT_NOT_EQUAL
     : NOT_EQUAL
     ;
-
+CP_CONTENT_Arithmetic
+    : Arithmetic
+    ;
 CP_CONTENT_WS
     : [ \t\r\n] -> channel(HIDDEN)
     ;
@@ -628,7 +637,9 @@ MUSTACHE_AND
 MUSTACHE_NOT
     : '!'
     ;
-
+MUSTAHCE_ARITHMETIC
+    : Arithmetic
+    ;
 //MUSTACHE_IDENTIFIER // THIS TOKEN IS SPECIFIC TO MUSTACHE, EVEN THOUGH IT"S THE SAME AS IDENTIFIER
 //    : [a-zA-Z_] [a-zA-Z_0-9]*
 //    ;
