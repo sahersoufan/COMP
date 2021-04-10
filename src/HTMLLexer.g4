@@ -152,6 +152,11 @@ fragment STRING
     : '\'' ~[<']* '\''
     ;
 
+fragment STRING4MUSTACHE
+    : '"' ~["]* '"'
+    | '\'' ~[<']* '\''
+    ;
+
 fragment TRUE
     : 'true'
     ;
@@ -501,7 +506,7 @@ CP_CONTENT_EQUAL_TO
 CP_CONTENT_NOT_EQUAL
     : NOT_EQUAL
     ;
-CP_CONTENT_Arithmetic
+CP_CONTENT_ARITHMETIC
     : Arithmetic
     ;
 CP_CONTENT_WS
@@ -569,7 +574,7 @@ MUSTACHE_NULL
     ;
 
 MUSTACHE_STRING
-    : STRING
+    : STRING4MUSTACHE
     ;
 
 MUSTACHE_NUMBER
