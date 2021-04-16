@@ -32,8 +32,7 @@ htmlContent
                                    /* *********************************** */
 
 htmlAttribute
-    : CP_SWITCH_DEF
-    | CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE appExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    : CP_APP CP_EQUALS CP_OPEN_DOUBLE_QUOTE appExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
 
     | CP_FOR CP_EQUALS CP_OPEN_DOUBLE_QUOTE forExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
 
@@ -42,6 +41,7 @@ htmlAttribute
 
     | CP_SWITCH CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
     | CP_SWITCH_CASE CP_EQUALS CP_OPEN_DOUBLE_QUOTE switchCaseExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
+    | CP_SWITCH_DEF
 
     | CP_IF CP_EQUALS CP_OPEN_DOUBLE_QUOTE ifExpression CP_CONTENT_CLOSE_DOUBLE_QUOTE
 
@@ -52,6 +52,8 @@ htmlAttribute
     //
     | TAG_NAME (TAG_EQUALS ATTVALUE_VALUE)?
     ;
+
+
                                  /* ************************************ */
 
 
@@ -77,8 +79,8 @@ htmlComment
 appExpression
     : collection4everything
     | (CP_CONTENT_NOT)? collection4App2 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4App2 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4App2)*
-
     ;
+
 collection4App1
         : variable
         | value
@@ -100,15 +102,18 @@ collection4App2
         | oneLineBoolCondition
     ;
 
-
+//for(true)
+//for(i in "saher")
+//for(i,j in a)
+//for(i in a ; z = INDEX )
+//(!a && b < c || c)
 // FOR
 forExpression
-    : collection4For1 ( IN   collection4For2 (CP_CONTENT_SEMI_COLON collection4For1 CP_CONTENT_EQUALS INDEX)? )?
+    : collection4For1 ( IN   collection4For2 (CP_CONTENT_SEMI_COLON collection4For1 CP_CONTENT_EQUALS INDEX)? )? //TODO check
     | collection4For1 CP_CONTENT_COMMA collection4For1 IN collection4For3
     | collection4For5
     | (CP_CONTENT_NOT)? collection4For4 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4For4 | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4For4)*
     ;
-
 collection4For1
     :variable
     |subObj
@@ -193,6 +198,13 @@ collection4ShowHide1
     ;
 //
 
+//<a cp-switch="c">
+//
+//<a1 cp-case="4">
+//
+//<a2 cp-default>
+//</a>
+
 
 // SWITCH
 switchExpression
@@ -204,7 +216,7 @@ switchCaseExpression
     ;
 
 collection4Switch1
-    :variable
+    : variable
     | CP_CONTENT_STRING
     | CP_CONTENT_NUMBER (CP_CONTENT_ARITHMETIC collection4ARITHMETIC)?
     | objArray
@@ -268,47 +280,44 @@ collection4Model2
 //
 
 
+
+
 // ANNOTATION
 annotationExpression
     : collection4Annotation
     ;
 collection4Annotation
-    :functionCall
-    |objArray
-    |subObj
-    |oneLine4Annotation
+    : functionCall4AnnotOneLine
+    | arrName arrayFuncRet4AnnotOneLine
+    | obj propFuncRet4AnnotOneLine
+    | oneLine4Annotation
     ;
 oneLine4Annotation
 : CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
 CP_CONTENT_QUESTION_MARK
-  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_COLON
-  (arrName arrayFuncRet4AnnotOneLine | functionName functionCall4AnnotOneLine | obj propFuncRet4AnnotOneLine) CP_CONTENT_CLOSE_PAR
+  collection4Annotation CP_CONTENT_COLON
+  collection4Annotation CP_CONTENT_CLOSE_PAR
 ;
+//func()[1][2][2].b().a()
+//f()()[]()
+//f()()[].a
+//f()().a()
+//f()().a[]
+
 functionCall4AnnotOneLine
-    : funcEndRet4AnnotOneLine (arrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)?
-    ;
-bridgeFAP4AnnotOneLine
-    : (ArrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)
+    : functionName funcEndRet4AnnotOneLine
     ;
 arrayFuncRet4AnnotOneLine
-    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC  CP_CONTENT_CLOSE_BRACKETS)+
-    funcEndRet4AnnotOneLine bridgeFAP4AnnotOneLine?
-;
+    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC  CP_CONTENT_CLOSE_BRACKETS)+ (propFuncRet4AnnotOneLine | funcEndRet4AnnotOneLine)
+    ;
 propFuncRet4AnnotOneLine
-    : (CP_CONTENT_DOT propertyValue)+
-    funcEndRet4AnnotOneLine bridgeFAP4AnnotOneLine?
+    : (CP_CONTENT_DOT propertyValue)+ (arrayFuncRet4AnnotOneLine | funcEndRet4AnnotOneLine)
     ;
 funcEndRet4AnnotOneLine
-:(CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)+
-;
+    :(CP_CONTENT_OPEN_PAR parameters? CP_CONTENT_CLOSE_PAR)+ (arrayFuncRet4AnnotOneLine | propFuncRet4AnnotOneLine)?
+    ;
 //
-
-
-
-
-
-
 
 
 // VARIABLE
@@ -331,12 +340,12 @@ arrName
     ;
 
 arrayCalling
-    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC
-     CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | (property)?)?
+    : (CP_CONTENT_OPEN_BRACKETS  collection4ARITHMETIC CP_CONTENT_CLOSE_BRACKETS)+ (functionCallFromVar | property)?
     ;
 array
     : CP_CONTENT_OPEN_BRACKETS collection4everything (CP_CONTENT_COMMA collection4everything)* CP_CONTENT_CLOSE_BRACKETS
     ;
+
 
 //
 
@@ -350,7 +359,6 @@ subObj
     ;
 objBody
     : CP_CONTENT_OPEN_CURLY_BRACKETS (pair (CP_CONTENT_COMMA pair)*)* CP_CONTENT_CLOSE_CURLY_BRACKETS
-    |
     ;
 pair
     : key CP_CONTENT_COLON collection4everything
@@ -392,12 +400,13 @@ parameter
     ;
 //
 
-
+// TODO add par to expr
 // comparison
 comparisonExpression
     : collection4comparison comparisonOperator collection4comparison
     ;
-
+//(a < x)
+//( !(a < (c < d ? 1 : 5) )  && a < b || c < d    ? 1 : 3)
 oneLineCondition
 : CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
@@ -409,6 +418,8 @@ oneLineBoolCondition
 ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*
     CP_CONTENT_QUESTION_MARK CP_CONTENT_TRUE CP_CONTENT_COLON CP_CONTENT_FALSE CP_CONTENT_CLOSE_PAR
     ;
+//v = (a < c ? 1 : 2) + a
+//v = (a < c ? 1 : [1,2,3]) + a
 oneLineArithCondithion
     : CP_CONTENT_OPEN_PAR (CP_CONTENT_NOT)? collection4oneLineCondition
          ( CP_CONTENT_AND (CP_CONTENT_NOT)? collection4oneLineCondition | CP_CONTENT_OR (CP_CONTENT_NOT)? collection4oneLineCondition)*

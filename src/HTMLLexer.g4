@@ -212,7 +212,7 @@ mode TAG;
     : 'cp-model'->pushMode(CP)
     ;
 
-// TODO i don't thimk so
+// TODO i don't think so
  CP_CLICK
     : '@click'->pushMode(CP)
     ;
