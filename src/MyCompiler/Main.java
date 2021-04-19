@@ -1,9 +1,9 @@
 package MyCompiler;
 
-import AST.HtmlDocument;
-import Base.BaseVisitor;
-import generated.HTMLLexer;
-import generated.HTMLParser;
+import old.generatedback.ASTBack.HtmlDocument;
+import old.generatedback.Baseback.BaseVisitor;
+import old.generatedback.HTMLLexer;
+import old.generatedback.HTMLParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;

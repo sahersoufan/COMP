@@ -6,10 +6,40 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/src/HTMLParser.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="E:\forth year\COMP\src" />
-          <option name="libDir" value="E:\forth year\COMP\src" />
+          <option name="outputDir" value="E:\forth year\COMP\gen" />
+          <option name="libDir" value="E:\forth year\COMP\gen" />
           <option name="encoding" value="" />
           <option name="pkg" value="generated" />
+          <option name="language" value="" />
+          <option name="generateVisitor" value="true" />
+        </PerGrammarGenerationSettings>
+        <PerGrammarGenerationSettings>
+          <option name="fileName" value="$PROJECT_DIR$/src/HTMLLexer.g4" />
+          <option name="autoGen" value="true" />
+          <option name="outputDir" value="E:\forth year\1\COMP\src" />
+          <option name="libDir" value="E:\forth year\1\COMP\src" />
+          <option name="encoding" value="" />
+          <option name="pkg" value="generated" />
+          <option name="language" value="" />
+          <option name="generateVisitor" value="true" />
+        </PerGrammarGenerationSettings>
+        <PerGrammarGenerationSettings>
+          <option name="fileName" value="$PROJECT_DIR$/gen/HTMLParser.g4" />
+          <option name="autoGen" value="true" />
+          <option name="outputDir" value="E:\forth year\1\COMP\src" />
+          <option name="libDir" value="E:\forth year\1\COMP\src" />
+          <option name="encoding" value="" />
+          <option name="pkg" value="generated" />
+          <option name="language" value="" />
+          <option name="generateVisitor" value="true" />
+        </PerGrammarGenerationSettings>
+        <PerGrammarGenerationSettings>
+          <option name="fileName" value="$PROJECT_DIR$/Gramers/HTMLParser.g4" />
+          <option name="autoGen" value="true" />
+          <option name="outputDir" value="E:\forth year\1\COMP\src" />
+          <option name="libDir" value="E:\forth year\1\COMP\Gramers" />
+          <option name="encoding" value="" />
+          <option name="pkg" value="generatedGramers" />
           <option name="language" value="" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>
